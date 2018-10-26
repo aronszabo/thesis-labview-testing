@@ -8,22 +8,22 @@
 \input{include/packages}
 
 %TODO Set the main variables
-\newcommand{\vikszerzoVezeteknev}{Gipsz}
-\newcommand{\vikszerzoKeresztnev}{Jakab}
+\newcommand{\vikszerzoVezeteknev}{Szabó}
+\newcommand{\vikszerzoKeresztnev}{Áron}
 
-\newcommand{\vikkonzulensAMegszolitas}{dr.~}
-\newcommand{\vikkonzulensAVezeteknev}{Konzulens}
-\newcommand{\vikkonzulensAKeresztnev}{Egy}
+\newcommand{\vikkonzulensAMegszolitas}{Dr.~}
+\newcommand{\vikkonzulensAVezeteknev}{Micskei}
+\newcommand{\vikkonzulensAKeresztnev}{Zoltán}
 
 \newcommand{\vikkonzulensBMegszolitas}{}
-\newcommand{\vikkonzulensBVezeteknev}{Konzulens}
-\newcommand{\vikkonzulensBKeresztnev}{Kettő}
+\newcommand{\vikkonzulensBVezeteknev}{}
+\newcommand{\vikkonzulensBKeresztnev}{}
 
 \newcommand{\vikkonzulensCMegszolitas}{}
 \newcommand{\vikkonzulensCVezeteknev}{}
 \newcommand{\vikkonzulensCKeresztnev}{}
 
-\newcommand{\vikcim}{Elektronikus terelők} % Cím
+\newcommand{\vikcim}{Testing solutions for LabVIEW applications} % Cím
 \newcommand{\viktanszek}{\bmemit} % Tanszék
 \newcommand{\vikdoktipus}{\bsc} % Dokumentum típusa (\bsc vagy \msc)
 \newcommand{\vikmunkatipusat}{szakdolgozatot} % a "hallgató nyilatkozat" részhez: szakdolgozatot vagy diplomatervet
@@ -47,8 +47,8 @@
 
 %TODO These define guidelines -- remove these
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{include/guideline}
-\include{include/project}
+%\include{include/guideline}
+%\include{include/project}
 
 \selectthesislanguage
 
@@ -76,9 +76,17 @@
 
 %TODO import your own content
 \include{content/introduction}
-\include{content/latex-tools}
-\include{content/thesis-format}
-\include{content/template-usage}
+\include{content/background}
+\include{content/testing}
+\include{content/design}
+\include{content/implementation}
+\include{content/evaluation}
+\include{content/conclusion}
+
+
+%\include{content/latex-tools}
+%\include{content/thesis-format}
+%\include{content/template-usage}
 
 
 % Acknowledgements
@@ -95,7 +103,7 @@
 % Bibliography
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \addcontentsline{toc}{chapter}{\bibname}
-\bibliography{bib/mybib}
+\bibliography{bib/thesis}
 
 
 % Appendix
