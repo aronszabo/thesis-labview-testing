@@ -4,14 +4,24 @@
 \section{Basics of Unit Testing}
 \subsection{A brief introduction to software lifecycle models}
 \subsection{Unit testing and testing patterns}
-Unit Testing is a main part of the software development workflow. On the lowest software architecture level, unit tests verify only a single module or package of the code. The tested software runs isolated from other components, external dependencies substituted with custom testing code, so that running a test will not have any effect on the system. A test method usually tests a single functionality of the unit, has a set of inputs, and expects a set of outputs or some action to happen. There have been recent efforts to make unit test creation an automated process, since the simple structure of tests needs often only mechanical coding, instead of a creative process of software design. 
+Unit Testing is a main part of the software development workflow. On the lowest software architecture level, unit tests verify only a single module or package of the code. The tested software runs isolated from other components, external dependencies substituted with custom testing code, so that running a test will not have any effect on the system. A test method usually tests a single functionality of the unit, has a set of inputs, and expects a set of outputs or some action to happen.
+
+There have been recent efforts to make unit test creation an automated process, since the simple structure of tests needs often only mechanical coding, instead of a creative process of software design. 
 \subsection{Test automatization}
+Automatic unit test generation is a major step making software development less resource-consuming and more cost-efficient. Though supervising the process and extending the generated tests are still needed, it may be a lot less time, than writing the whole test manually. Additionally, the generated code will be more likely to be error-free, and will contain test cases the programmer did not think of.
+
+In certain cases, when a special type of tests are needed, the test generator can be self-made, but most of the cases a more general testing tool with the right parameters is enough. A wide palette of testing tools for most programming languages is available. 
+
+\subsection{IntelliTest}
+\subsection{Java tools}
 \section{Symbolic execution}
 
 Symbolic execution \cite{King:1976:SEP:360248.360252}
+\subsection{Java Pathfinder}
 \section{About LabVIEW}
 LabVIEW is a system engineering software tool, developed by National Instruments, used commonly for rapid development of testing systems, measurement solutions, or other industrial applications. Its features include a graphic programming language, called G, which has advantages over a text-based programming language from a system engineering perspective. The language being graphic comes with a steep learning curve: the drag-and-drop and wiring methods of the software are really intuitive, and the language elements are provided in a toolbox. The program nodes are executed in a data flow, resulting that parallel execution is a natural feature of this language. This is taken advantage of in embedded systems, and it also makes LabVIEW a unique platform for testing, or perform symbolic execution on.
 \subsubsection{An example LabVIEW system solution}
+
 \subsection{Hardware and environment}
 \subsubsection{Measurement tools}
 \subsubsection{Real-time hardware}
