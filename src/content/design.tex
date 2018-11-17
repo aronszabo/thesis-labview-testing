@@ -2,5 +2,10 @@
 \chapter{Design}
 %----------------------------------------------------------------------------
 \section{Goals}
+My goal is to implement a tool in LabVIEW, which can provide test inputs for a single VI, its front panel controls or input terminals. These test inputs should cover all the possible execution paths (in the case of LabVIEW, all the subdiagrams, or all combination of subdiagrams). After running the tool, outputs for each input set can be easily defined executing the VI. A tool like this can later help with unit test generation: using the generated input and output sets, xUnit-style tests can be created automatically, which will have 100\% branch (diagram) coverage.
+
+According to my knowledge, no such tool exists for LabVIEW yet, so a simple tool created for the BSc thesis can be later be improved and used in an automatic test generation project.
+
+A possible solution is symbolic execution of the VI: defining the input controls (data accessors) as symbolic variables, the constraint solver will try to determine the values in all the execution tree leafs.
 \section{Architecture}
 \section{Limitations}
