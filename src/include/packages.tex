@@ -64,12 +64,18 @@
 \usepackage{xspace}
 
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows}
-\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,arrows,decorations.markings}
 
+\usetikzlibrary{positioning}
 \tikzstyle{block} = [rectangle, draw,
-    text width=5em, text centered,minimum height=4em,minimum width=10em]
+    text width=7em, text centered,minimum height=3em,minimum width=8em]
+    \tikzstyle{label} = [
+    text width=5em, text centered]
 \tikzstyle{block_rounded} = [rectangle, draw, 
     text width=5em, text centered, rounded corners, minimum height=4em,minimum width=10em]
 \tikzstyle{line} = [draw, -latex', ultra thick]
 \tikzstyle{double} = [draw, <->, thick, dotted]
+\tikzstyle{generalization}=[draw, ->, >=open triangle 90,  thick]
+\tikzstyle{comp}=[draw, -diamond,  thick]
+\tikzstyle{aggr}=[draw, -open diamond,  thick]
+%\tikzstyle{composition}=[draw, -{Diamond}, ultra thick]
