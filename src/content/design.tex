@@ -29,12 +29,18 @@ OUT: o
 
 I decided to convert the dataflow program to a procedural one, this means to define the execution order of nodes and turning the data flow wires into variables. This is possible, since executing a program in LabVIEW does the same - when running on the computer, the nodes execute in some order after each other. A node can execute, when all the input values are ready. This can also be observed in the development environment using the Highlight Execution tool, after executing a node the output values will slowly move to the next node. A G program cannot contain a wire cycle (except with feedback nodes), thus the nodes form a directed acyclic graph, which will have a topological ordering. When two or more topological ordering exist, it may be worth to choose the one that has forking statements later in the execution, to reduce execution time. Control structures will be quite easy to handle: case structures and loops are subdiagrams on a VI, and during conversion the contents of subdiagrams will become parts of If-Else statements and While loops. 
 
+\section{Symbolic execution of a VI}
 
+If performed correctly, the conversion will produce a simple algorithmic representation of the dataflow program. Symbolic execution can now be run.
 
-If performed correctly, the conversion will produce a simple algorithmic representation of the dataflow program. Symbolic execution can now be performed.
+From the symbolic execution point of view, VIs (Virtual Instruments) can be treated as the program, on which the symbolic execution is done. It has inputs, outputs, and most of the instructions are usually the native components of LabVIEW (so that their behaviour can be predicted). Controls are going to be the inputs, their data type can be chosen as one of the basic types, clusters (similar to struct), or objects. In the case of the symbolic execution tool, I am going to stick to the basic types. Indicators are the outputs of the program.
+
+Instruction blocks use wires to pass data to each other. They are similar to variables in text-based languages, but they also define order of execution between blocks. Since each wire is going to represent a new variable in the program, the symbolic executor will have to deal with lots of unnamed variables.
 
 Another issue is dealing with nodes that depend on external data source, or those that perform an operation that is not supported by the constraint solver.
 
+\subsection{Program flow elements}
+\subsection{Arithmetical, logical, and other operations}
 
 \section{Architecture}
 
@@ -50,7 +56,13 @@ in the leafs of the symbolic tree
   
   \end{itemize}
 
-The first step depends entirely on the programming interface of NI software, so it will be a topic of the implementation section. The 
+The first step depends entirely on the programming interface of NI software, so it will be a topic of the implementation section. Once the data model of the VI is accessible, it can be converted to a procedural program. To do this, an object model for the program has to be designed, which is tailored for the purpose of symbolic execution.
+
+The starting point of the model will be the class \textit{Statement}, which is the same unit in the program as a node in the VI. These \textit{Statement}s will execute in a defined order, which is managed by a \textit{Sequence} object. \textit{Sequence} corresponds to the Block Diagram of the VI, or any subdiagram (in a case structure or a loop). Since a Node in the VI can do complex tasks, and have multiple outputs, a \textit{Statement} can be broken down to simpe instructions, \textit{Assignment}s, that evaluate an \textit{Expression}, and place the result in a \textit{Variable}.
+
+\textit{Expression} is just an empty base class for the expression classes to derive from. This approach provides extensibility, any kind of expression can be treated the same way, and with the help of \textit{Operators}, complex expressions with two or more levels can be built.
+
+\textit{IfStatement} and \textit{LoopStatement} will have \textit{Statement} as their ancestor to be able to join a \textit{Sequence}. The subdiagrams of a case structure or a loop will be a part of these \textit{Statement}s as \textit{Sequence}s.
 \begin{figure}
 
 \centering
@@ -68,6 +80,7 @@ The first step depends entirely on the programming interface of NI software, so 
     \node [block, below left=of expression] (variable) {Variable};
     \node [block, below=of expression] (symvar) {SymbolicVar};
     \node [block, below right=of expression] (oper) {Operator};
+    \node [block, right=of oper] (const) {Constant};
         
     \path [comp] (statement) -- (seq);
     \path [comp] (assignment) |- (statement);
@@ -79,6 +92,7 @@ The first step depends entirely on the programming interface of NI software, so 
      \path [generalization] (variable) |- (expression);
      \path [generalization] (symvar) -- (expression);
      \path [generalization] (oper) |- (expression);
+     \path [generalization] (const) |- (expression);
                
    % \node [block, below right=1cm and -2.6cm of arch] (des) {Detailed design};
     % \node [block_rounded, below right=1cm and -1cm of des] (dev) {Development};
@@ -101,5 +115,7 @@ The first step depends entirely on the programming interface of NI software, so 
 \caption{Simplified diagram of the procedural program data model} 
 \label{fig:datamodeldiagram}
 \end{figure}
+
+
 
 \section{Limitations}
