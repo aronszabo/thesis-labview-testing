@@ -17,4 +17,44 @@ Building a plugin is an option too. LabVIEW 2018 has a toolbox called VI Scripti
 A plugin for LabVIEW NXG needs a different approach. Most of NXG uses .NET framework, and an add-on integrates in a form of a .NET class library (DLL). The object model of a Virtual Instrument is directly accessible as a .NET object, and plugin entry points can easily be defined with class attributes. UI elements can be easily created as well. This way, the plugin is written in C\# language.
 
 I have chosen to create an NXG plugin, since writing such a complex tool in G language would require such an expertise in LabVIEW, that I do not have. Additionally, I already had the routine in NXG API and C\#.
-\section{LabVIEW NXG object model}
+\section{LabVIEW NXG API and object model}
+There is hardly any documentation on the NXG programming interface at the moment, but an example plugin project on GitHub\footnote{\url{https://github.com/ni/nidevlabs}}. Fortunately, this project had almost all the API I needed for this project.
+\lstset{escapechar=@}
+\begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={The same program using a procedural paradigm},captionpos=b,label={lst:menuapi},language=C++]
+[ExportPushCommandContent]
+public class LauncherCommands : PushCommandContent
+{
+    public static readonly ICommandEx SymbolicMenuRoot = new RelayCommandEx(RelayCommandEx.HandleNoOp)
+    {
+        UniqueId = "SymbolicTool.MenuRoot",
+        LabelTitle = "SymbolicTool",
+        MenuParent = MenuPathCommands.RootMenu
+    };
+    public readonly ICommandEx RunCommand = new ShellRelayCommand(OnRun)
+    {
+        UniqueId = "SymbolicTool.RunCommand",
+        LabelTitle = "Run Symbolic Execution",
+        MenuParent = SymbolicMenuRoot
+    };
+    public override void CreateApplicationContent(ICommandPresentationContext context)
+    {
+        base.CreateApplicationContent(context);
+        context.Add(SymbolicMenuRoot);
+        context.Add(RunCommand);
+    }
+    public static void OnRun(ICommandParameter parameter, ICompositionHost host, DocumentEditSite site)
+    {
+    	* Run the program here *
+    }
+}
+\end{lstlisting}
+
+\begin{figure}
+
+\centering
+\includegraphics[width=80mm,keepaspectratio]{figures/lvobject.pdf}
+\caption{LabVIEW Node object model} 
+\label{fig:lvobject}
+\end{figure}
+I implemented a launcher code based on the ExamplePlugins project, that integrates a menu command into the menu bar of NXG (Listing \ref{lst:menuapi}). The three parameters of the callback function provide access to the object model of LabVIEW. DocumentEditSite refers to the currently opened document, and since the execution will run on the opened VI, getting the model will be really easy: \lstinline[columns=fixed]{rootElement = site.ActiveDocumentEditor?.EditorInfo?.RootElement;}
+

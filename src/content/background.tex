@@ -53,7 +53,7 @@ However, code coverage measurement does not reflect to the correlation of the so
 
 Mutation score is a quite accurate metric as test quality, but it is a very resource-demanding process to perform mutation testing: creating mutants is moderately difficult, executing the entire test suite for each mutant however, can be a very long procedure. That is why coverage is preferred to mutation testing most of the time.
 
-\subsection{Test automation}
+\section{Test automation}
 
 There have been recent efforts to make unit test creation an automated process, since the simple structure of tests needs often only mechanical coding, instead of a creative process of software design. 
 
@@ -61,12 +61,13 @@ Automatic unit test generation is a major step making software development less 
 
 Generating the code of a unit test is rather simple having been given the set of inputs and outputs. After preparing the environment, a function of the tested unit is called with the inputs, and the return value is compared to the expected outputs. The only challenges are to determine, which functions to call (if not specified), and of course what input and output parameters to use. One approach is to create tests randomly, and then keep the useful ones based on the metrics discussed in the previous section.
 
-In certain cases, when a special type of tests are needed, the test generator can be self-made, but most of the cases a more general testing tool with the right parameters is enough. A wide palette of testing tools for most programming languages is available. 
+In certain cases, when a special type of tests are needed, the test generator can be self-made, but most of the cases a more general testing tool with the right parameters is enough. A wide palette of testing tools for most programming languages is available. To illustrate the practical use of test generation tools, I will include a brief introduction of two popular products.
+
 
 \subsection{IntelliTest}
 A popular automatic test generation tool is IntelliTest\footnote{\url{https://visualstudio.microsoft.com/}}, which is a built-in feature of Microsoft Visual Studio 2015 Enterprise Edition or later. It supports C\# language projects that target .NET framework, and can emit tests for the most popular C\# unit testing frameworks (MSTest, MSTest 2, NUnit, xUnit). IntelliTest is a versatile test generation suite, using various techniques and patterns, like dynamic symbolic execution or parameterized mocks, to output a test that suits the requirements. It has been evolved from Microsoft Pex Framework, which was a pioneer product for creating parameterized unit tests.  \cite{advances-in-unit-testing-theory-and-practice, intellitest_manual}
-\subsection{Java tools}
-EvoSuite\footnote{\url{http://www.evosuite.org/}} is  \cite{aron_autom}
+\subsection{EvoSuite}
+EvoSuite\footnote{\url{http://www.evosuite.org/}} is a similar tool, it provides automatic test generation support for Java language. The tool emits JUnit 4 tests, and features test minimalization, filtering based on coverage or mutation testing, and sandbox execution. Its configuration can be done with a wide set of parameters to fine tune test generation. EvoSuite is open-source\footnote{\url{https://github.com/EvoSuite/evosuite}}. \cite{aron_autom}
 \section{Symbolic execution}
 
 Symbolic execution is a method to define a possible set of inputs for each of the execution paths of the program. It is an extension of normal execution, arithmetic and logic expressions will have to handle symbolic values. Since the program itself will not be modified, symbolic variables will be introduced as inputs. What this means is, that the value of a variable during execution can not only be an integer value, but an expression containing a symbolic variable.
@@ -75,8 +76,10 @@ Besides the current values of variables, the execution state contains a path con
 When the execution of all branches finish, the result will be a symbolic execution tree, with execution states as nodes, and completed executions as its leafs. The leafs will contain an expression for the path condition, from which the symbolic variables, that are the same as the inputs, will be calculated using a constraint solver. There are cases, when branches will not finish on their own: for example, a loop can repeat forever, if the loop conditional is not eventually controversial with the path condition. Because of that, a maximum depth has to be defined for the execution tree.
 
 This way, test inputs for all possible execution paths can be generated, and the test suite will have a 100\% coverage. The method has limitations though. Branching statements will potentially double the number of leafs on the graph, which means in the worst case, that the execution time will grow exponentially with program size. This can restrict the usability of the method on medium or large sized program units. Additionally, the constraint solver might not be compatible, or might be very expensive with all the operations performed in the program (for example nonlinear arithmetic). \cite{z3_tutorial} Operations of a more complex kind, like string manipulation has to be simplified to low-level operations, or treated like a black box. External dependencies have to be mocked or treated like a black box.
-
+\subsection{Examples}
+% peldak!!!!
 \subsection{Java Symbolic Pathfinder}
+Java PathFinder is a tool for verification of Java bytecode, developed by NASA from 1999, and made open-source in 2005. Symbolic Pathfinder is an extension to JPF, during execution it turns Java instructions to their symbolic interpretations. It uses multiple decision procedures, and supports multiple constraint solvers.
 \cite{Pasareanu2013SymbolicPI}
 \section{About LabVIEW}
 LabVIEW\footnote{\url{http://www.ni.com/en-us/shop/labview.html}} is a system engineering software tool, developed by National Instruments, used commonly for rapid development of testing systems, measurement solutions, or other industrial applications. Its features include a graphic programming language, called G, which has advantages over a text-based programming language from a system engineering perspective. The language being graphic comes with a steep learning curve: the drag-and-drop and wiring methods of the software are really intuitive, and the language elements are provided in a toolbox. The program nodes are executed in a data flow, resulting that parallel execution is a natural feature of this language. This is taken advantage of in embedded systems, and it also makes LabVIEW a unique platform for unit testing.
@@ -92,12 +95,25 @@ Execution is based on data availability, which means a node will execute, if all
 \end{figure}
 
 \subsubsection{Dataflow paradigm}
+Execution of G programs differ from usual, sequential programs. The execution order of program statements is not defined, a statement (or node in LabVIEW) when all the inputs for a statement are ready. This brings parallelism into the language, but execution will be serial - LabVIEW software will usually run on hardware with single-core processor, and G code is compiled to machine code. \cite{labview_under_the_hood} The execution order of parallel nodes in not deterministic. 
 \subsubsection{Built-in nodes}
+The built-in LabVIEW nodes, or primitives are the basic building blocks of a LabVIEW program, that are not written in G language (so they are not subVIs), and they can be created from the tool box of the block diagram editor.
+
+The primitives are grouped in the following categories (in the NXG version):
+\begin{enumerate}
+   \item \textbf{Program flow:} this category contains the essential control structures, like case or loop diagrams or event handlers
+   \item \textbf{Data types:} the manipulation commands for each data type (Numeric, String, Array, Cluster, etc.)
+   \item \textbf{Math:} from basic math operations (arithmetic, comparison) to advanced mathematics (linear algebra or integrals)
+      \item \textbf{Analysis:} useful, optimized algorithms for signal processing and control applications
+      \item \textbf{Hardware interfaces:} communication with external devices
+            \item \textbf{Data communication:} communication inside the LabVIEW program, or over network
+                  \item \textbf{Storage:} interface to the file system, or other storage
+                        \item \textbf{User interface:} display dialogs or other GUI elements
+         \item \textbf{Interop:} run C code or G code of other LabVIEW version, call system shell
+\end{enumerate}
 \subsection{Environment and hardware}
 LabVIEW features an integrated development environment, which is intuitive to use for those who are familiar with other IDEs. The project structure is managed in the Project Explorer, where source code can be organized into folders and by targets. The VI Editor has two main views: one for the Front Panel, and one for the Block Diagram. Both views are graphical: the elements are placed from a toolbox with a drag and drop method. Running a VI is possible from both the VI Editor and the Project Explorer. For debugging, LabVIEW offers the Highlight Execution feature, which will slow down the execution of the VI and show the actual values of the wires on the block diagram.
 
 After installing the neccessary drivers, LabVIEW connects to NI hardware with minimal configuration, which can be performed with a tool called Measurement \& Automation Explorer (MAX), bundled with LabVIEW. These include data acquisition and control hardware (sensors, motion controls, displays), test and instrumentation hardware (oscilloscopes, multimeters, waveform generators), wireless hardware (spectrum and signal analysers, software defined radios). They can be accessed and controlled from LabVIEW directly.
 
-\subsubsection{Real-time hardware}
-cRIO
 

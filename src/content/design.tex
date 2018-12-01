@@ -11,7 +11,6 @@ A possible solution is symbolic execution of the VI: defining the input controls
 The topic of symbolic execution is well defined in the area of procedural programming, but not for dataflow programming.
 
 \begin{figure}
-
 \includegraphics[width=150mm,keepaspectratio]{figures/vi1.pdf}
 \caption{Dataflow program example} 
 \label{fig:dataflowexample}
@@ -44,6 +43,14 @@ Another issue is dealing with nodes that depend on external data source, or thos
 
 \section{Architecture}
 
+
+\begin{figure}
+\includegraphics[width=150mm,keepaspectratio]{figures/architecture.pdf}
+\caption{Architecture plan} 
+\label{fig:dataflowexample}
+\end{figure}
+
+
 The final architecture of the tool, based on the reasons above, will consist of the following:
 
 \begin{itemize}
@@ -57,6 +64,8 @@ in the leafs of the symbolic tree
   \end{itemize}
 
 The first step depends entirely on the programming interface of NI software, so it will be a topic of the implementation section. Once the data model of the VI is accessible, it can be converted to a procedural program. To do this, an object model for the program has to be designed, which is tailored for the purpose of symbolic execution.
+
+\subsection{Object model}
 
 The starting point of the model will be the class \textit{Statement}, which is the same unit in the program as a node in the VI. These \textit{Statement}s will execute in a defined order, which is managed by a \textit{Sequence} object. \textit{Sequence} corresponds to the Block Diagram of the VI, or any subdiagram (in a case structure or a loop). Since a Node in the VI can do complex tasks, and have multiple outputs, a \textit{Statement} can be broken down to simpe instructions, \textit{Assignment}s, that evaluate an \textit{Expression}, and place the result in a \textit{Variable}.
 
