@@ -78,9 +78,71 @@ When the execution of all branches finish, the result will be a symbolic executi
 This way, test inputs for all possible execution paths can be generated, and the test suite will have a 100\% coverage. The method has limitations though. Branching statements will potentially double the number of leafs on the graph, which means in the worst case, that the execution time will grow exponentially with program size. This can restrict the usability of the method on medium or large sized program units. Additionally, the constraint solver might not be compatible, or might be very expensive with all the operations performed in the program (for example nonlinear arithmetic). \cite{z3_tutorial} Operations of a more complex kind, like string manipulation has to be simplified to low-level operations, or treated like a black box. External dependencies have to be mocked or treated like a black box.
 \subsection{Examples}
 % peldak!!!!
+Below is a simple illustration of symbolic execution. Listing \ref{lst:symbolic_test} describes a small C program with two If-statements. During its symbolic execution we are going to define its parameter a symbolic variable. Based on the parameter value, execution can take different paths. 
+
+\begin{lstlisting}[frame=single,float=!ht,caption={An example program demonstrating symbolic execution},captionpos=b,label={lst:symbolic_test},language=C++]
+void test(int x){
+	if(x<3) x=x+1;
+	if(x>0) x=x-1
+	return x;
+}
+\end{lstlisting}
+
+X<3 is a forking statement, because both X<3 and its negated (X>=3) can be satisfied. Execution continues on both paths, and path condition updates. On the X<3 branch, x is updated to x+1, and the condition evaluates on the updated value. On the other branch, one of the path conditions (X>=3 \& X<=0) cannot be satisfied, in this case the execution will not continue. When the execution finishes on one branch, the path condition is evaluated using a constraint solver, and it will calculate a possible value for the symbolic variable. The whole execution tree is shown on Figure \ref{fig:symbolic_test}. \cite{Pasareanu}
+
+The calculated values:
+\begin{itemize}
+\item \textbf{Path 1:} x=0
+\item \textbf{Path 2:} x=-1
+\item \textbf{Path 3:} x=3
+
+\end{itemize}
+
+\begin{figure}
+
+\centering
+\begin{tikzpicture}[node distance = 1cm, auto]
+    % Place nodes
+   
+    
+    \node [prog_block] (nodea) {x:X\\ PC: \textit{true}};
+    \node [prog_block, below left=of nodea] (nodeb) {PC: \textit{X<3}};
+    \node [prog_block, below right=of nodea] (nodec) {PC: \textit{X>=3}};
+        \node [prog_block, below=of nodeb] (noded) {X:=X+1};
+     \node [prog_block, below left=1cm and -1.1cm of noded] (nodee) {PC: \textit{X<3 \& X+1>0}};
+      \node [prog_block, below right=1cm and -1.1cm of noded] (nodef) {PC: \textit{X<3 \& X+1<=0}};
+         \node [prog_block, below=of nodee] (nodeg) {X:=X-1};
+    
+     \node [prog_block, below left=1cm and -1.1cm of nodec] (nodeh) {PC: \textit{X>=3 \& X>0}};
+      \node [prog_block, below right=1cm and -1.1cm of nodec] (nodei) {PC: \textit{X>=3 \& X<=0}};
+       \node [prog_block, below=of nodeh] (nodej) {X:=X-1};
+       \node [label, below=0.2cm of nodeg] (lbl1) {Path 1};
+              \node [label, below=0.2cm of nodef] (lbl2) {Path 2};
+              \node [label, below=0.2cm of nodej] (lbl3) {Path 3};
+              \node [label, below=0.2cm of nodei] (lbl4) {False};
+              
+    \path [line] (nodea) -- (nodeb);
+    \path [line] (nodea) -- (nodec);
+    \path [line] (nodeb) -- (noded);
+    \path [line] (noded) -- (nodee);
+    \path [line] (noded) -- (nodef);
+    \path [line] (nodee) -- (nodeg);
+    \path [line] (nodec) -- (nodeh);
+    \path [line] (nodec) -- (nodei);
+    \path [line] (nodeh) -- (nodej);
+                                                       
+\end{tikzpicture}
+
+\caption{Symbolic execution of the example program} 
+\label{fig:symbolic_test}
+\end{figure}
 \subsection{Java Symbolic Pathfinder}
 Java PathFinder is a tool for verification of Java bytecode, developed by NASA from 1999, and made open-source in 2005. Symbolic Pathfinder is an extension to JPF, during execution it turns Java instructions to their symbolic interpretations. It uses multiple decision procedures, and supports multiple constraint solvers.
 \cite{Pasareanu2013SymbolicPI}
+\subsection{Constraint solvers}
+Constraint solvers are used to check if logical formulas over a set of theories can be satisfied or not. Z3\footnote{\url{https://github.com/Z3Prover/z3}} is a powerful open source constraint solver tool, developed by Microsoft Research. It offers a programming interface for a wide range of programming languages, and it also has a script language for direct input.
+
+If the formulas are satisfiable (sat), a model that makes them true can be retrieved. \cite{z3_tutorial}
 \section{About LabVIEW}
 LabVIEW\footnote{\url{http://www.ni.com/en-us/shop/labview.html}} is a system engineering software tool, developed by National Instruments, used commonly for rapid development of testing systems, measurement solutions, or other industrial applications. Its features include a graphic programming language, called G, which has advantages over a text-based programming language from a system engineering perspective. The language being graphic comes with a steep learning curve: the drag-and-drop and wiring methods of the software are really intuitive, and the language elements are provided in a toolbox. The program nodes are executed in a data flow, resulting that parallel execution is a natural feature of this language. This is taken advantage of in embedded systems, and it also makes LabVIEW a unique platform for unit testing.
 \subsection{The G programming language}

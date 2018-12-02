@@ -2,10 +2,30 @@
 \chapter{Testing in LabVIEW}
 %----------------------------------------------------------------------------
 
-\section{Testing measurement and control systems}
+%\section{Testing measurement and control systems}
 \section{Unit testing LabVIEW applications}
+Unit testing in LabVIEW programs are commonly used in medium or large size projects, or where requirements are changing. Though, it is not a common practice everywhere, even if the project is an industrial application, where a fault is really expensive to recover. The main reason is to cut testing costs.
+
+The testing techniques are similar to those in traditional programming languages, with a few differences. Software units can be a single VI, a group of VIs, or a LabVIEW class. Unit tests follow the xUnit schema: the tested unit gets pre-defined input sets, and the results are compared to the pre-defined outputs.
+
+It is important to write testable code, that can run isolated from external dependencies, and does not require to run the entire program. "Spaghetti code", that is not able to run on its own, is not only bad from the perspective of testing, but can cause other problems (like re-usability in other projects, or maintaining compatibility with new versions of other components). In LabVIEW, it is really easy to fall in this trap, but following development guidelines help to evade it. Following Test Driven Development is also possible in LabVIEW, with nearly the same rules as in other languages - when the interface of a unit is defined, creating tests can begin. \cite{delacor_ni2014}
+
+There are really few unit testing tools and frameworks for LabVIEW compared to other languages\footnote{\url{https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks}}, and they only support current generation LabVIEW (LV 2018), and not NXG.
 \subsection{Self-made test fixtures}
+It is always an option to build a test fixture manually (and in NXG it is the only option currently). Every test suite will get a harness VI, which executes several test cases. Test cases of a test suite will do the same action on the unit, but with several different input sets. The inputs and expected outputs can be defined in an array, a cluster, or other data structure, and then a loop iterates over the test cases, executing the VI under test for each set of parameters. The test verifies output values and error output if it is present. Setup and teardown parts can be included in the loop too (or global setup and teardown outside the loop), to initialize and prepare the unit, and to do any cleanup task necessary. A boolean output will indicate, whether the test suite passed or failed - in order to pass, all test cases must pass. The block diagram of an example test fixture is shown on Figure~\ref{fig:selfmadetestfixture}.
+A top module is recommended, which contains all the Harness VIs, and summarizes the results. This could substitute the interface of a unit testing framework. 
+
+\begin{figure}
+\includegraphics[width=150mm,keepaspectratio]{figures/lv_testsuite.png}
+\caption{A test fixture in LabVIEW NXG} 
+\label{fig:selfmadetestfixture}
+\end{figure}
+
 \subsection{Unit Test Framework}
+Unit Test Framework\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/209043}} (or UTF for short) is the official unit testing tool for LabVIEW, released by National Instruments. It is available for purchase as an addon from LabVIEW Tools Network. UTF is the most popular unit testing framework, since it is covered by the support of National Instruments, an ISO certified company.
+
+The interface of UTF is really easy to use, a unit test can be made in a few minutes. Test suites are stored in .lvtest files, which can be edited with a configuration panel. A tabular-style interface is used to define the inputs and outputs for each test case. Setup and teardown VIs, and other options can also be defined. There are a few special cases, when the desired behaviour cannot be expressed using the editor (like passing parameters to a teardown VI).
 \subsection{JKI VI Tester}
+VI Tester\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/215910}} is an open source tool
 \subsection{Caraya}
 \subsection{InstaCoverage}
