@@ -25,7 +25,17 @@ A top module is recommended, which contains all the Harness VIs, and summarizes 
 Unit Test Framework\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/209043}} (or UTF for short) is the official unit testing tool for LabVIEW, released by National Instruments. It is available for purchase as an addon from LabVIEW Tools Network. UTF is the most popular unit testing framework, since it is covered by the support of National Instruments, an ISO certified company.
 
 The interface of UTF is really easy to use, a unit test can be made in a few minutes. Test suites are stored in .lvtest files, which can be edited with a configuration panel. A tabular-style interface is used to define the inputs and outputs for each test case. Setup and teardown VIs, and other options can also be defined. There are a few special cases, when the desired behaviour cannot be expressed using the editor (like passing parameters to a teardown VI).
+
+The results are shown in a dialog with other metrics, like code coverage. Status of the tests are shown also in the Project Explorer, for a quick check. UTF has the advantage to run tests on real-time NI hardware, like the CompactRIO\footnote{\url{http://www.ni.com/en-us/shop/compactrio.html}}. \cite{labview_utf}
 \subsection{JKI VI Tester}
-VI Tester\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/215910}} is an open source tool
+VI Tester\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/215910}} is an open source tool from JKI Software. Based on the xUnit test achitecture, it is a really powerful test framework, that supports testing object-oriented LabVIEW programs well. Tests are created from a template, and organized into a test class. Assertion and other utilities can be used as a testing element subVI, as seen on Figure \ref{fig:vitester}. \cite{vitesterwiki}
+\begin{figure}
+\centering
+\includegraphics[width=120mm,keepaspectratio]{figures/vitester.png}
+\caption{Example VI with an assertion} 
+\label{fig:vitester}
+\end{figure}
 \subsection{Caraya}
+Another unit test framework from JKI Software is Caraya\footnote{url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/215909}}, which uses a different approach. The main feature is the assertion subVI, which can be used on its own (outside a unit test), to ensure validity of data in a system in production. Tests are defined with Test Suite and Define Test subVIs, and unit tests defined like that get summarized in an interface like in JKI VI Tester. \cite{carayapages}
 \subsection{InstaCoverage}
+InstaCoverage\footnote{\url{http://sine.ni.com/nips/cds/view/p/lang/hu/nid/216652}} is a new, xUnit-style tool. The test suites are stored in a similar way to UTF, but each test gets a harness VI, like in JKI's tools. Harness VIs are really minimalistic, therefore test execution is really quick. InstaCoverage tests can also run on real-time hardware. \cite{icovsite}
