@@ -22,7 +22,17 @@
 
 %This document is a \LaTeX-based skeleton for BSc/MSc~theses of students at the Electrical Engineering and Informatics Faculty, Budapest University of Technology and Economics. The usage of this skeleton is optional. It has been tested with the \emph{TeXLive} \TeX~implementation, and it requires the PDF-\LaTeX~compiler.
 
+In the world of industrial and embedded computer systems, it is a top priority to design both hardware and software correctly functioning and reliable. A faulty solution can cause a significant financial loss to the manufacturer, or harm to the consumer. 
 
+Modern manufacturing techniques use the flexibility of software to make the control of a production line, or the test and measurement of the finished product more efficient. In the case of product prototyping, engineering software is even more essential. A number of these solutions are implemented with the hardware and software products of National Instruments, whose main strength is quick prototyping, easy implementation and cost effectiveness.
+
+During the development of such software, continuous verification should follow the implementation, a method of doing that is software testing. Unit testing is a type of software testing, it verifies the correct behaviour of the smallest testable part of a program, isolated from all other parts or the outside world.
+
+However, testing is a time-consuming, expensive process, when not done effectively. Therefore, techniques to support or automatize testing, and test generation are being researched. One of these techniques is symbolic execution, which supports unit test generation with providing a set test inputs, that maximizes the coverage of the software by the test.
+
+My task was to investigate symbolic execution and the topic of unit testing, and to implement a prototype of it on the software platform of National Instruments, the LabVIEW framework, where no similar tool exists yet. This is a challenging task, since the dataflow programming approach of LabVIEW is really different from traditional programming languages.
+
+In my BSc thesis I am going to briefly cover the background of these topics, and walk through the steps of designing the tool, and implementation of the prototype.
 \vfill
 \selectthesislanguage
 

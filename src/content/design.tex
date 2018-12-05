@@ -13,12 +13,37 @@ During this BSc thesis, I am going to implement a prototype tool with basic func
 Requirements for the prototype:
 \begin{enumerate}
 \item Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)
-\item Specify input variables to be used to reach a path
+\item Specify input variables for each path to be used to reach it
 \item Return only one path for VIs without a case structure
 \item Support basic arithmetical, comparison and logical operations (+, -, *, ++, --, <, >, ==, And, Or, Not) during execution
-\item Support integer an boolean data types
+\item Support integer and boolean data types
 \item Stop execution of paths with an unsatisfiable condition
 \end{enumerate}
+
+\subsection{Possible later improvements}
+
+The prototype tool will have some limitations to fit in the span of BSc thesis. Due to the restricted functionality, it will likely not run on real projects. Though, the prototype might be a good starting point for developing a tool, which will.
+
+\paragraph{The feature set, that has to be implemented additionally for a working tool:}
+
+\begin{itemize}
+  \item Further supported data types: double, string, array, cluster
+  \item Implement support for loops and other structures
+  \item Extended set of math operators, implement operators for other data types
+  \item Substitute complex operation, or external dependency with expected value
+  \item Support subVIs, VI hierarchy
+   \item Generate output sets by executing the VI
+  \end{itemize}
+  
+
+\paragraph{Advanced improvements:}
+
+\begin{itemize}
+  \item Approximate value calculation for complex operators
+  \item Unit test generation based upon generated values
+  \item A special type of execution for event loops
+  \item Option to define external dependencies as symbolic values
+  \end{itemize}
 
 \section{Architecture}
 
@@ -49,6 +74,7 @@ The first step depends entirely on the programming interface of NI software, so 
 
 The topic of symbolic execution is well defined in the area of procedural programming, but not for dataflow programming.
 
+I decided to convert the dataflow program to a procedural one, this means to define the execution order of nodes and turning the data flow wires into variables. This is possible, since executing a program in LabVIEW does the same - when running on the computer, the nodes execute in some order after each other. A node can execute, when all the input values are ready. This can also be observed in the development environment using the Highlight Execution tool, after executing a node the output values will slowly move to the next node. A G program cannot contain a wire cycle (except with feedback nodes), thus the nodes form a directed acyclic graph, which will have a topological ordering. When two or more topological ordering exist, it may be worth to choose the one that has forking statements later in the execution, to reduce execution time. Control structures will be quite easy to handle: case structures and loops are subdiagrams on a VI, and during conversion the contents of subdiagrams will become parts of If-Else statements and While loops. 
 \begin{figure}
 \includegraphics[width=150mm,keepaspectratio]{figures/vi1.pdf}
 \caption{Dataflow program example} 
@@ -64,8 +90,6 @@ w5 = D(w2,w4)
 o = w3 + w5
 OUT: o
 \end{lstlisting}
-
-I decided to convert the dataflow program to a procedural one, this means to define the execution order of nodes and turning the data flow wires into variables. This is possible, since executing a program in LabVIEW does the same - when running on the computer, the nodes execute in some order after each other. A node can execute, when all the input values are ready. This can also be observed in the development environment using the Highlight Execution tool, after executing a node the output values will slowly move to the next node. A G program cannot contain a wire cycle (except with feedback nodes), thus the nodes form a directed acyclic graph, which will have a topological ordering. When two or more topological ordering exist, it may be worth to choose the one that has forking statements later in the execution, to reduce execution time. Control structures will be quite easy to handle: case structures and loops are subdiagrams on a VI, and during conversion the contents of subdiagrams will become parts of If-Else statements and While loops. 
 \section{Symbolic execution of a VI}
 
 If performed correctly, the conversion will produce a simple algorithmic representation of the dataflow program. Symbolic execution can now be run.
@@ -152,5 +176,3 @@ The starting point of the model will be the class \textit{Statement}, which is t
 \end{figure}
 
 
-
-\section{Limitations}

@@ -297,3 +297,8 @@ class ExecutionState
 
 \section{Displaying the output}
 For this is only a prototype, the results, which are the list of execution paths, their path conditions, and the calculated symbolic variables. After getting the execution tree leafs (see Listing \ref{lst:launchercode}), a simple string builder loop collects the data from the output structures, and the final string gets displayed in a \underline{NIMessageBox}.
+
+\section{Installing the plugin}
+Since my tool is a program library (DLL), it had to be made sure, that LabVIEW loads it at startup. LabVIEW NXG loads all the libraries it finds under the LabVIEW NXG 2.0\\Addons directory. I placed the DLL and the debug file in this folder, and also the libraries of Z3 solver, because they have to be loaded as well.
+
+On the next start, LabVIEW loads the installed plugins.

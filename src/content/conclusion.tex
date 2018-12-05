@@ -2,6 +2,12 @@
 \chapter{Conclusion}
 %----------------------------------------------------------------------------
 
-A bevezető tartalmazza a diplomaterv-kiírás elemzését, történelmi előzményeit, a feladat indokoltságát (a motiváció leírását), az eddigi megoldásokat, és ennek tükrében a hallgató megoldásának összefoglalását.
+In this semester, I learned about a new testing technique, symbolic execution, which is the foundation of most of the popular unit test generation frameworks -- it can specify test inputs, that will cover all (or most) execution paths of the program, making the test suite more complete. This method is powerful, but due to its resource-demanding nature it is quite difficult to implement correctly: running it on a large application without control can increase execution time exponentially. 
 
-A bevezető szokás szerint a diplomaterv felépítésével záródik, azaz annak rövid leírásával, hogy melyik fejezet mivel foglalkozik.
+My prototype tool did not have to deal with this issue, but despite that, it was challenging to implement: the target platform was LabVIEW NXG by National Instruments, a system engineering tool, used by engineers worldwide. However, its dataflow-based graphical language is not the usual platform to perform symbolic execution on. I had to find a way to apply the technique of symbolic execution, which is well defined for procedural programs.
+
+The solution was to implement a parser, which converts the dataflow program to a procedural one. That was the most difficult part of the implementation, because I had to get familiar with the object model (with almost no documentation), and there were a number of special cases that could be created in a LabVIEW program, which had to be handled with a workaround in the parser tool.
+
+Based on the articles on symbolic execution, that part of the tool was quite easy to implement, especially because the data structure of the parsed program was nearly ideal to perform it. 
+
+Although the finished prototype tool has a limited functionality, it might be a good starting point to develop an advanced test generation suite. No such tool exists for LabVIEW yet, therefore it would be a novelty tool, really useful to all the engineers using LabVIEW.

@@ -63,10 +63,16 @@ I wanted to test, if nesting case structures behaves correctly. When \textit{out
 \end{figure}
 
 
-\begin{lstlisting}[frame=single,float=!ht,caption={The output of the symbolic execution for VI "B"},captionpos=b,label={lst:testvi1_sym},language=]
+\begin{lstlisting}[frame=single,float=!ht,caption={The output of the symbolic execution for VI "B"},captionpos=b,label={lst:testvi2_sym},language=]
 pc: ([outside var] & [inside var]), inside var=true, outside var=true
 pc: ([outside var] & ![inside var]), inside var=false, outside var=true
 pc: ![outside var], outside var=false
 \end{lstlisting}
 
+\section{Results of testing}
+I tested the tool with a number of other self-made VIs as input. Although there were bugs in some cases in the parser, when creating a certain pattern on the block diagram (resulting in an exception), the overall results indicate, that the tool is working correctly, and gives the correct outputs.
+
+Since the prototype lacks support for more fundamental LabVIEW elements, unfortunately, I was unable to demonstrate it on a real-life application.
+
+The requirements specified in the Design chapter have been fulfilled, the creation of the prototype was successful.
 %% screenshots
