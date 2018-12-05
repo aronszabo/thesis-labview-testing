@@ -72,24 +72,9 @@ public static void OnRun(ICommandParameter parameter, ICompositionHost host, Doc
 \section{The parser}
 The algorithm used in the main parser loop is a sort of breadth-first search. The nodes waiting to be processed get placed in a queue object (which initializes with those nodes, that have no input wires, and can be executed right away). The main loop takes a node from the front of the queue, and makes sure all its input nodes are already processed - this is important, because at the end of processing a node, all the output nodes are added to the queue, and they not necessarily have all their inputs ready. 
 
-A \textit{Statement}\footnote{Note: the classes of my implementation are indicated with \textit{italic}, the classes of LabVIEW API are indicated with \underline{underlined} font} is created for the node, then the arithmetical, logical or other \textit{Operation}s are added respectively. When the node is a \underline{DataAccessor} (LabVIEW control), a \textit{SymbolicVariable} will be introduced.
-
-The parser binds a \textit{Variable} to all of the wires. New \textit{Variable}s are introduced, when the parser processes the output wires of a node (since a wire can be connected to only one node output), and all \underline{ManhattanWire} - \textit{Variable} pairs will be stored in a lookup table (C\# Dictionary) global to a single run of the algorithm. This way, if multiple nodes use that output as an input, it will be the same \textit{Variable}.
-
-When the search reaches a case structure, the parser will be recursively called for both subdiagrams. Wires enter the case diagram through \underline{BorderNode}s (or tunnels), so that for each of them a new \textit{Variable} will be introduced. In a subdiagram, the search will start from the \underline{BorderNode}s (and the nodes without input wires). After the search execution for both diagrams, the execution returns to the root parser.
-
-To summarize, the simplified pseudo-code is listed below (Algorithm \ref{alg:parser}), that is easier to understand. 
-The explanation of data structures used during the operation of the parser:
-
-\begin{itemize}
-\item \textbf{rootElement} : \underline{Element} -- the parameter of the algorithm, the diagram, whose immediate child nodes must be searched
-\item \textbf{nextNodes} : Queue<\underline{Wireable}> -- found \underline{Nodes}, waiting to be processed
-\item \textbf{variableDictionary} : Dictionary<\underline{ManhattanWire}, \textit{Variable}> -- association between LabVIEW wires and variables in the procedural program
-\item \textbf{sequence} : \textit{Sequence} -- the procedural program, chain of \textit{Statement}s, the result of this algorithm
-\end{itemize}
+A \textit{Statement}\footnote{Note: the classes of my implementation are indicated with \textit{italic}, the classes of LabVIEW API are indicated with \underline{underlined} font} is created for the node, then the arithmetical, logical or other operations are added respectively: an \textit{Expression} (which can be as simple as an addition, or a more complex expression, a nested structure of \textit{Operator}s) placed in an \textit{Assignment}, which assigns the \textit{Expression} value to a \textit{Variable}. When the node is a \underline{DataAccessor} (LabVIEW control), a \textit{SymbolicVariable} will be introduced.
 
 
-\SetKwProg{Fn}{}{}{}
 \begin{algorithm}
 \ForEach{nodes of rootElement without input wires}{
 add node to nextNodes\;
@@ -137,6 +122,178 @@ nextNodes.Enqueue(thisNode)\;
  \label{alg:parser}
 \end{algorithm}
 
-Of course, this is more of a demonstration, than the actual program. A number of workaround solutions had to be used to handle special cases, for example when a case structure had two output tunnels, that connect to one source in the subdiagram, two variables were created for the same wire, which is invalid. The second variable had to be assigned the value of the first variable.
+The parser binds a \textit{Variable} to all of the wires. New \textit{Variable}s are introduced, when the parser processes the output wires of a node (since a wire can be connected to only one node output), and all \underline{ManhattanWire} - \textit{Variable} pairs will be stored in a lookup table (C\# Dictionary) global to a single run of the algorithm. This way, if multiple nodes use that output as an input, it will be the same \textit{Variable}.
+
+When the search reaches a case structure, the parser will be recursively called for both subdiagrams. Wires enter the case diagram through \underline{BorderNode}s (or tunnels), so that for each of them a new \textit{Variable} will be introduced. In a subdiagram, the search will start from the \underline{BorderNode}s (and the nodes without input wires). After the search execution for both diagrams, the execution returns to the root parser.
+
+To summarize, the simplified pseudo-code is listed in Algorithm \ref{alg:parser}, that is easier to understand than the original source. 
+The explanation of data structures used during the operation of the parser:
+
+\begin{itemize}
+\item \textbf{rootElement} : \underline{Element} -- the parameter of the algorithm, the diagram, whose immediate child nodes must be searched
+\item \textbf{nextNodes} : Queue<\underline{Wireable}> -- found \underline{Nodes}, waiting to be processed
+\item \textbf{variableDictionary} : Dictionary<\underline{ManhattanWire}, \textit{Variable}> -- association between LabVIEW wires and variables in the procedural program
+\item \textbf{sequence} : \textit{Sequence} -- the procedural program, chain of \textit{Statement}s, the result of this algorithm
+\end{itemize}
+
+
+
+Of course, this pseudo-code is more of a demonstration, than the actual program. A number of workaround solutions had to be used to handle special cases in the block diagram. For instance, when a case structure had two output tunnels, that connect to one source in the subdiagram, two variables were created for the same wire, which is invalid. The second variable had to be assigned the value of the first variable.
 
 Since references from one LabVIEW object to another were mostly using a heterogenous collection, type checks and type casts take up a large percentage of the source code.
+
+\section{Symbolic Execution Loop}
+
+As mentioned earlier, symbolic execution is an extension to regular execution. The loop will iterate through the program, and execute the statements as it would normally, if there are no symbolic variables present.
+
+The current execution environment is stored in an \textit{ExecutionState} object. This object stores the calculated values of \textit{Variable}s and the path condition throughout the execution. If the value of a variable is calculated from a symbolic variable, an \textit{Expression} containing the \textit{SymbolicVar} gets stored. It is important, that these values never store a reference to another \textit{Variable} object, when evaluating such an expression, since these might change after assignment, and the values would become invalid. During evaluation, the stored value of the \textit{Variable} is substituted into the expression, and if the two operands of an \textit{Operator} are constant values, the corresponding operator can evaluate with their values (see Listings \ref{lst:operator_eval} and \ref{lst:variable_eval}). 
+
+\begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={Evaluation part of the Operator class},captionpos=b,label={lst:operator_eval},language=C++]
+class Operator : Expression
+{
+    Expression A { get; set; }
+    Expression B { get; set; }
+    string Op { get; set; }
+    
+    // ...
+    
+    public override Expression Evaluate(ExecutionState es)
+    {
+        Expression a = A.Evaluate(es);
+        Expression b = null; // for expressions with only one operand
+        if (B!=null)b = B.Evaluate(es);
+        if (a is Constant && b is Constant)
+        {
+            switch (Op)
+            {
+                case "+":
+                    return new Constant((a as Constant).Value + (b as Constant).Value);
+                // ...
+            }
+        }
+        // ...
+        return new Operator(a, b, Op);
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={Evaluation part of the Variable class},captionpos=b,label={lst:variable_eval},language=C++]
+class Variable : Expression
+{
+    string Name { get; set; }
+
+    // ...
+    
+    public override Expression Evaluate(ExecutionState es)
+    {
+        return es.GetVariableValue(this);
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={The part of ExecutionState related to execution},captionpos=b,label={lst:executionstate},language=C++]
+class ExecutionState
+{
+    public Dictionary<Variable, Expression> variableValues = new Dictionary<Variable, Expression>();
+    public Expression Pc;
+
+    // ...
+
+    public Expression GetVariableValue(Variable v)
+    {
+        return variableValues[v];
+    }
+    public void SetVariableValue(Variable v, Expression e)
+    {
+        variableValues[v] = e;
+    }
+    public ExecutionState Clone()
+    {
+        return new ExecutionState(new Dictionary<SymbolicVar, Expr>(symbolicVariables), new Dictionary<Variable, Expression>(variableValues), Pc);
+    }
+
+    public ExecutionState(Dictionary<SymbolicVar, Expr> symbolicVariables, Dictionary<Variable, Expression> variableValues, Expression pc)
+    {
+        this.symbolicVariables = symbolicVariables;
+        this.variableValues = variableValues;
+        Pc = pc;
+    }
+    // ...
+}
+
+\end{lstlisting}
+
+The interesting part is handling \textit{IfStatement}s. The true and false branches of the structure are stored in the object as \textit{Sequence}s, therefore a new execution can be started for each of them. 
+
+Before doing that, it must be verified, if the path condition extended with the condition of the if statement (or its negate for the false branch) is satisfiable or not. (For doing that the constraint solver will already be used. It will be described in the later sections, how \textit{Expression}s are getting handed to the solver.) If it is satisfiable, the execution state gets cloned for each branch, and updated with the extended path conditions. 
+
+At this point, the operation of the tool resembles a depth-first search algorithm: the execution of the two execution branches begin right away, one after another, and each gets the program sequence from their part of the if statement, plus the rest of the program after the if statement. This way, the remaining part of the program will run twice, in the context of both branches.
+
+When the run comes to the end, the routine returns the \textit{ExecutionState} of the finished program. This \textit{ExecutionState} (possibly) gets returned to the evaluation to the if statement, where these states are added to a list, and after executing both branches, the routine returns with the list. 
+
+It can be seen, that calling the symbolic execution routine on the sequence of the entire program will return a list of \textit{ExecutionState}s of all possible execution paths (these are the leafs of the execution tree). These all have their own path condition, which now can be evaluated by the solver, to get the input values for each of them.
+
+\section{Running the solver}
+At the end of execution, \textit{ExecutionState} objects will contain a path condition (\textit{Expression}), which consist of symbolic variables, constant values, and operators. These kind of formulas are the constraints, the solver is expecting, it just needs to be translated to its own language. 
+
+The object model of the solver is really similar to the \textit{Expression} model used in the tool. All of the \textit{Expression} classes get a \lstinline[columns=fixed]{Microsoft.Z3.Expr BuildTerm(Context ctx, ExecutionState es);} function, which builds the Z3 expression recursively. The needed symbolic variables are defined during this conversion (and are stored in \textit{ExecutionState}, for not to redefine in the case of multiple usage). The relevant parts are listed in Listing \ref{lst:executionstate_solver}.
+
+
+\begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={Calling the solver in ExecutionState},captionpos=b,label={lst:executionstate_solver},language=C++]
+class ExecutionState
+{
+    // ...
+    public Dictionary<SymbolicVar, Expr> symbolicVariables = new Dictionary<SymbolicVar, Expr>();
+    // ...
+    public Expression Pc;
+
+    public Expr GetSymbolicVariable(SymbolicVar s, Context ctx, Sort range=null)
+    {
+        if (symbolicVariables.ContainsKey(s))
+        {
+            return symbolicVariables[s];
+        }
+        else
+        {
+            if (range == null) range = ctx.MkIntSort();
+            Expr e = ctx.MkConst(s.Name, range);
+            symbolicVariables.Add(s, e);
+            return e;
+        }
+    }
+    // ...
+    private Solver GetSolver()
+    {
+        if (Pc == null) Pc = new BoolConstant(true);
+        using (Context ctx = new Context())
+        {
+            symbolicVariables.Clear();
+            Expr pathCondition = Pc.BuildTerm(ctx, this);
+            Solver s = ctx.MkSolver();
+            s.Assert((BoolExpr)pathCondition);
+            return s;
+        }
+    }
+    public bool CheckModel()
+    {
+        Solver s = GetSolver();
+        return s.Check().ToString().Equals("SATISFIABLE");
+    }
+    public Dictionary<string, string> GetSymbols()
+    {
+        Dictionary<string, string> symbols = new Dictionary<string, string>();
+        Solver s = GetSolver();
+        var check = s.Check();
+        Microsoft.Z3.Model m = s.Model;
+        foreach(FuncDecl d in m.Decls)
+        {
+            symbols.Add(d.Name.ToString(), m.ConstInterp(d).ToString());
+        }
+        return symbols;
+    }
+}
+
+\end{lstlisting}
+
+\section{Displaying the output}
+For this is only a prototype, the results, which are the list of execution paths, their path conditions, and the calculated symbolic variables. After getting the execution tree leafs (see Listing \ref{lst:launchercode}), a simple string builder loop collects the data from the output structures, and the final string gets displayed in a \underline{NIMessageBox}.
