@@ -7,6 +7,44 @@ My goal is to implement a tool in LabVIEW, which can provide test inputs for a s
 According to my knowledge, no such tool exists for LabVIEW yet, so a simple tool created for the BSc thesis can be later be improved and used in an automatic test generation project.
 
 A possible solution is symbolic execution of the VI: defining the input controls (data accessors) as symbolic variables, the constraint solver will try to determine the values in all the execution tree leafs.
+\section{Scope}
+During this BSc thesis, I am going to implement a prototype tool with basic functionality, and with support for a limited set of LabVIEW elements. This tool can later be improved, adding the whole set of LabVIEW primitives, and possibly developed into a whole test generation solution. 
+
+Requirements for the prototype:
+\begin{enumerate}
+\item Return only one path for VIs without case structure
+\item Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)
+\item Specify input variables to be used to reach a path
+\item Support basic arithmetical, comparison and logical operations (+, -, *, ++, --, <, >, ==, And, Or, Not) during execution
+\item Stop execution of paths with an unsatisfiable condition
+\end{enumerate}
+
+\section{Architecture}
+
+The tool will be a plugin of LabVIEW NXG, to have access to the programming interface and object model of VIs, and to integrate the tool to the UI. The tool will use the Z3 Solver too, referenced as a library.
+
+Two main parts of the tool will be the Parser and the Symbolic Execution Loop. The job of the parser is to interpret and convert a LabVIEW VI into a form that can be later used during symbolic execution. The second part, Symbolic Execution Loop iterates through the converted procedural program, executing the statements, and forking when necessary. The output of the program is an execution tree, with its leafs associated to the possible execution paths of the program. These leafs will contain a path condition, which can be evaluated by the Z3 Solver, returning input values to be used to reach that path.
+\begin{figure}
+\includegraphics[width=150mm,keepaspectratio]{figures/architecture.pdf}
+\caption{Architecture plan} 
+\label{fig:architectureplan}
+\end{figure}
+
+
+The steps executed by the tool will be the following:
+
+\begin{itemize}
+  \item Access the object model of the tested Virtual Instrument
+  \item Generate a procedural representation of the dataflow program (Parser)
+  \item Execute the procedural program with the inputs of the VI as symbolic variables (Symbolic Execution Loop)
+   \item Use a constraint solver to calculate the symbolic variables
+in the leafs of the symbolic tree
+     \item Display the calculated inputs (or use them to build a unit test)
+  \end{itemize}
+
+The first step depends entirely on the programming interface of NI software, so it will be a topic of the implementation section. Once the data model of the VI is accessible, it can be converted to a procedural program. To do this, an object model for the program has to be designed, which is tailored for the purpose of symbolic execution.
+
+\section{Getting the program ready for symbolic execution}
 
 The topic of symbolic execution is well defined in the area of procedural programming, but not for dataflow programming.
 
@@ -27,7 +65,6 @@ OUT: o
 \end{lstlisting}
 
 I decided to convert the dataflow program to a procedural one, this means to define the execution order of nodes and turning the data flow wires into variables. This is possible, since executing a program in LabVIEW does the same - when running on the computer, the nodes execute in some order after each other. A node can execute, when all the input values are ready. This can also be observed in the development environment using the Highlight Execution tool, after executing a node the output values will slowly move to the next node. A G program cannot contain a wire cycle (except with feedback nodes), thus the nodes form a directed acyclic graph, which will have a topological ordering. When two or more topological ordering exist, it may be worth to choose the one that has forking statements later in the execution, to reduce execution time. Control structures will be quite easy to handle: case structures and loops are subdiagrams on a VI, and during conversion the contents of subdiagrams will become parts of If-Else statements and While loops. 
-
 \section{Symbolic execution of a VI}
 
 If performed correctly, the conversion will produce a simple algorithmic representation of the dataflow program. Symbolic execution can now be run.
@@ -39,32 +76,19 @@ Instruction blocks use wires to pass data to each other. They are similar to var
 Another issue is dealing with nodes that depend on external data source, or those that perform an operation that is not supported by the constraint solver.
 
 \subsection{Program flow elements}
-In the first prototype of the tool, I decided to implement the Case Structure only, 
-\subsection{Arithmetical, logical, and other operations}
+For loop, while loop and case structure are the basic building blocks of any program. Converting them from dataflow is straightforward, and symbolic execution is defined for those. If having loops in the program, with a symbolic condition, a maximum depth of execution tree has to be defined, not to get stuck with an infinite number of iterations. Feedback nodes and shift registers inside loops behave like variables, passing values from one iteration to the next.
 
-\section{Architecture}
+Sequence and disable structures are only involved during the conversion: sequence structure defines order of execution, which the converted program will naturally has; disabled parts will be simply ignored (or treated like a case structure, based on preference). Event structures are hard to deal with, an event can be raised any time during execution. If no other task runs parallel to the event loop, they can be best represented with a case structure for all possible events, with a symbolic variable as its input, inside a loop.
 
+Timing blocks will simply be ignored, as they are irrelevant to symbolic execution. 
 
-\begin{figure}
-\includegraphics[width=150mm,keepaspectratio]{figures/architecture.pdf}
-\caption{Architecture plan} 
-\label{fig:architectureplan}
-\end{figure}
+In the first prototype of the tool, I decided to implement the Case Structure only, this is the element, on which it is the easiest to demonstrate symbolic operation. 
+\subsection{Arithmetic, logic, and other operations}
+Basic arithmetical and logical operations, like addition, subtraction are easy to implement and to be solved by the constraint solver. Multiplication and division are also easy to implement, but can create such a nonlinear problem, that the solver cannot calculate. 
 
+More complex operations, like trigonometric functions and signal processing can be approximated with a constant value or linear function. External dependencies, like storage or network access are black box - they can be substituted with an expected value, or another symbolic variable.
 
-The final architecture of the tool, based on the reasons above, will consist of the following:
-
-\begin{itemize}
-  \item Access the object model of the tested Virtual Instrument
-  \item Generate a procedural representation of the dataflow program
-  \item Execute the procedural program with the inputs of the VI as symbolic variables 
-   \item Use a constraint solver to calculate the symbolic variables
-in the leafs of the symbolic tree
-     \item Display the calculated inputs (or use them to build a unit test)
-  
-  \end{itemize}
-
-The first step depends entirely on the programming interface of NI software, so it will be a topic of the implementation section. Once the data model of the VI is accessible, it can be converted to a procedural program. To do this, an object model for the program has to be designed, which is tailored for the purpose of symbolic execution.
+In the prototype, basic arithmetic and logic will be implemented.
 
 \subsection{Object model}
 
