@@ -9,8 +9,17 @@
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
 %Jelen dokumentum egy diplomaterv sablon, amely formai keretet ad a BME Villamosmérnöki és Informatikai Karán végző hallgatók által elkészítendő szakdolgozatnak és diplomatervnek. A sablon használata opcionális. Ez a sablon \LaTeX~alapú, a \emph{TeXLive} \TeX-implementációval és a PDF-\LaTeX~fordítóval működőképes.
+Az ipari és beágyazott rendszerek világában kiemelt fontosságú a hardver és szoftver helyes működésűre és megbízhatóra tervezése. Egy hibás megoldás nagy károkat okozhat gyártónak és fogyasztónak egyaránt.
 
+Modern gyártási folyamatok kihasználják a szoftver adta rugalmasságot a gyártósorok irányításánál, vagy a kész termék mérésénél és tesztelésénél. Prototípusok készítésekor pedig ezen mérnöki szoftverek előnye még lényegesebb. Ezen megoldások egy része a National Instuments cég hardver- és szoftvercsaládjának használatával valósult meg, amelyek fő erőssége a gyors prototípuskészítés, könnyű és hatékony megvalósítás lehetővé tétele.
 
+Ilyen szoftverek fejlesztésekor a megvalósítás közben jelen kell lennie a folyamatos ellenőrzésnek is, ennek egy módja a szoftver tesztelése. Az egységtesztelés (a tesztelés egy fajtája) a program legkisebb tesztelhető részegységeinek helyes működését igazolja, olyan módon, hogy az teszteléskor el van választva a program többi részétől.
+
+A tesztelés, ha nincs hatékonyan megvalósítva, drága és erőforrásigényes művelet. Kutatások irányulnak a tesztelés segítésére vagy automatizálására, tesztek generálásának módszereire. A szimbolikus végrehajtás egy ilyen módszer: egységtesztek automatikus létrehozását segíti olyan tesztbemenetek előállításával, ami a program működésének nagy részét le fogja fedni.
+
+Feladatom a szimbolikus végrehajtás és az egységtesztelés témájának körüljárása, és egy ezt alkalmazó eszköz fejlesztése volt. Az eszköz a National Instruments LabVIEW szoftveres környezetében írt programokhoz készült, ahol hasonló megoldás még nem létezik. A feladat legnagyobb kihívását a LabVIEW adatfolyam-alapú programozási nyelvének hagyományos nyelvektől való eltérése jelentette.
+
+Szakdolgozatomban röviden kifejtem az érintett témákat, és bemutatom az eszköz tervezésének lépéseit, a prototípus elkészítésének folyamatát, majd kiértékelését.
 \vfill
 \selectenglish
 
@@ -24,15 +33,15 @@
 
 In the world of industrial and embedded computer systems, it is a top priority to design both hardware and software correctly functioning and reliable. A faulty solution can cause a significant financial loss to the manufacturer, or harm to the consumer. 
 
-Modern manufacturing techniques use the flexibility of software to make the control of a production line, or the test and measurement of the finished product more efficient. In the case of product prototyping, engineering software is even more essential. A number of these solutions are implemented with the hardware and software products of National Instruments, whose main strength is quick prototyping, easy implementation and cost effectiveness.
+Modern manufacturing techniques use the flexibility of software to control a production line, or to test and measure the finished product more efficiently. In the case of product prototyping, the use of engineering software is even more essential. A number of these solutions are implemented with the hardware and software products of National Instruments, whose main strength is quick prototyping, easy implementation and cost effectiveness.
 
 During the development of such software, continuous verification should follow the implementation, a method of doing that is software testing. Unit testing is a type of software testing, it verifies the correct behaviour of the smallest testable part of a program, isolated from all other parts or the outside world.
 
 However, testing is a time-consuming, expensive process, when not done effectively. Therefore, techniques to support or automatize testing, and test generation are being researched. One of these techniques is symbolic execution, which supports unit test generation with providing a set test inputs, that maximizes the coverage of the software by the test.
 
-My task was to investigate symbolic execution and the topic of unit testing, and to implement a prototype of it on the software platform of National Instruments, the LabVIEW framework, where no similar tool exists yet. This is a challenging task, since the dataflow programming approach of LabVIEW is really different from traditional programming languages.
+My task was to investigate symbolic execution and the topic of unit testing, and to implement a prototype of it for the software platform of National Instruments, the LabVIEW framework, where no similar tool exists yet. This is a challenging task, since the dataflow programming approach of LabVIEW is really different from traditional programming languages.
 
-In my BSc thesis I am going to briefly cover the background of these topics, and walk through the steps of designing the tool, and implementation of the prototype.
+In my BSc thesis I am going to briefly cover the background of these topics, and walk through the steps of designing the tool, implementation and evaluation of the prototype.
 \vfill
 \selectthesislanguage
 

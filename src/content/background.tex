@@ -44,7 +44,7 @@ The essence of unit testing can be demonstrated the best in the V-Model (Figure 
 \subsection{Unit testing and testing patterns}
 Unit Testing is a main part of the software development workflow, testing of individual hardware or software units or groups of related units \cite{159342}. On the lowest software architecture level, unit tests verify only a single module or package of the code. The tested software runs isolated from other components, external dependencies substituted with custom testing code, so that running a test will not have any effect on the system. Result of a unit test should only depend on the test and the tested software, but no other circumstances. Multiple execution of the same unit test on the same program must produce the exact same output. A test method usually tests a single functionality of the unit, has a set of inputs, and expects a set of outputs or some action to happen.
 
-In a typical tests suite, both positive and negative tests exist. Positive tests exercise the correct behaviour of the software, providing a set of valid inputs, and expecting a defined set of outputs. At the end of the tests, assert methods compare the actual values to the expected ones. Negative tests are for those cases, where the software is expected to fail, an invalid set of inputs for example. Errors like these should be handled in a robust way, like throwing an exception, or returning a value that indicates an error. Most unit test frameworks are able to expect exceptions \cite{Olan:2003:UTT:948785.948830}.
+In a typical test suite, both positive and negative tests exist. Positive tests exercise the correct behaviour of the software, providing a set of valid inputs, and expecting a defined set of outputs. At the end of the tests, assert methods compare the actual values to the expected ones. Negative tests are for those cases, where the software is expected to fail, an invalid set of inputs for example. Errors like these should be handled in a robust way, like throwing an exception, or returning a value that indicates an error. Most unit test frameworks are able to expect exceptions \cite{Olan:2003:UTT:948785.948830}.
 
 \subsection{Coverage and other metrics}
 What makes a good test suite? Code coverage is the most common to be measured, it is the percentage of lines executed in the unit. It gives a good picture about the completeness of the test suite, if all possible functionality is tested. The implementation of this metric is quite simple: the testing tool marks the lines that have been executed at least once during the execution of the test suite. There is no significant increase in execution time: compared to the bare execution of the tests, the only overhead is the software debugger marking the visited lines.
@@ -132,6 +132,22 @@ The calculated values:
 \caption{Symbolic execution of the example program} 
 \label{fig:symbolic_test}
 \end{figure}
+
+\subsection{Constraint solvers}
+Constraint solvers are used to check if logical formulas over a set of theories can be satisfied or not. They take the declaration of entities and a set of assertions as input, and give sat (satisfiable) or unsat (unsatisfiable) as output. They might also return a model, containing concrete values, that can be used to satisfy the theories.
+
+Z3\footnote{\url{https://github.com/Z3Prover/z3}} is a powerful open source constraint solver tool, developed by Microsoft Research. It offers a programming interface for a wide range of programming languages (including Python or C\#), and it also has a script language for direct input \cite{z3_tutorial}.
+
+For instance, in the previous example, the value of x can be retrieved using the path constraint using a small Z3 script (Listing \ref{lst:z3_example}).
+
+\begin{lstlisting}[frame=single,float=!ht,caption={Z3 script, that solves Path 2 on the previous example},captionpos=b,label={lst:z3_example},language=]
+(declare-const x Int)
+(assert (and (< x 3) (not (> (+ x 1) 0))))
+(check-sat)
+(get-model)
+\end{lstlisting}
+
+
 \subsection{Test generator tools}
 
 \paragraph{IntelliTest}
@@ -141,10 +157,8 @@ EvoSuite\footnote{\url{http://www.evosuite.org/}} is a similar tool, it provides
 \paragraph{Java Symbolic Pathfinder}
 Java PathFinder is a tool for verification of Java bytecode, developed by NASA from 1999, and made open-source in 2005. Symbolic Pathfinder is an extension to JPF, during execution it turns Java instructions to their symbolic interpretations. It uses multiple decision procedures, and supports multiple constraint solvers \cite{Pasareanu2013SymbolicPI}.
 
-\subsection{Constraint solvers}
-Constraint solvers are used to check if logical formulas over a set of theories can be satisfied or not. Z3\footnote{\url{https://github.com/Z3Prover/z3}} is a powerful open source constraint solver tool, developed by Microsoft Research. It offers a programming interface for a wide range of programming languages, and it also has a script language for direct input.
 
-If the formulas are satisfiable (sat), a model that makes them true can be retrieved \cite{z3_tutorial}. 
+
 \section{About LabVIEW}
 LabVIEW\footnote{\url{http://www.ni.com/en-us/shop/labview.html}} is a system engineering software tool, developed by National Instruments, used commonly for rapid development of testing systems, measurement solutions, or other industrial applications. Its features include a graphic programming language, called G, which has advantages over a text-based programming language from a system engineering perspective. The language being graphic comes with a steep learning curve: the drag-and-drop and wiring methods of the software are really intuitive, and the language elements are provided in a toolbox. The program nodes are executed in a data flow, resulting that parallel execution is a natural feature of this language. This is taken advantage of in embedded systems, and it also makes LabVIEW a unique platform for unit testing.
 \subsection{The G programming language}
@@ -175,6 +189,18 @@ The primitives are grouped in the following categories (in the NXG version):
                         \item \textbf{User interface:} display dialogs or other GUI elements
          \item \textbf{Interop:} run C code or G code of other LabVIEW version, call system shell
 \end{enumerate}
+
+\subsection{Front panel}
+Front panel is the user interface of a VI. It holds similar controls and indicators as a desktop forms application, such as input boxes, buttons, progress bars; as well as controls specific for engineering applications, like graphs, charts and waveform displays. Controls and indicators are  created automatically for a control or indicator node on the block diagram, and their values are linked. 
+
+\begin{figure}
+\centering
+\includegraphics[width=120mm,keepaspectratio]{figures/frontpanel.png}
+\caption{Front panel editor of a LabVIEW NXG measurement example} 
+\label{fig:frontpanel}
+\end{figure}
+
+This way, all VIs can be run on their own (for instance, to manually test them), but in a large project VIs are hierarchically called, and usually there is a top VI, which is meant to be run. The VI also has an icon editor, to customize appearance as a subVI (with G being a graphical language, this is essential to maintain code readability). 
 \subsection{Environment and hardware}
 LabVIEW features an integrated development environment, which is intuitive to use for those who are familiar with other IDEs. The project structure is managed in the Project Explorer, where source code can be organized into folders and by targets. The VI Editor has two main views: one for the Front Panel, and one for the Block Diagram. Both views are graphical: the elements are placed from a toolbox with a drag and drop method. Running a VI is possible from both the VI Editor and the Project Explorer. For debugging, LabVIEW offers the Highlight Execution feature, which will slow down the execution of the VI and show the actual values of the wires on the block diagram.
 

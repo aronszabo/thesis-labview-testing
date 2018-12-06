@@ -9,7 +9,7 @@ Therefore, I overrode the ToString functions for all the model objects to return
 In the following examples, the shown converted procedural examples are the output of this routine.
 \section{Small demos}
 \paragraph{Demo "A"}
-For the first demo I used the same program, which I used to demonstrate symbolic execution in the Background section (Listing \ref{lst:symbolic_test}). The dataflow counterpart of that program can be seen on Figure \ref{fig:testvi1}.
+For the first demo I used the same program, which I used to demonstrate symbolic execution in the Background section (Listing \ref{lst:symbolic_test}). The dataflow counterpart of that program\footnote{The demo VIs, and other test VIs (mentioned in the Requirements table) are included in the attachment. See appendix.} can be seen on Figure \ref{fig:testvi1}.
 \begin{figure}
 \centering
 \includegraphics[width=150mm,keepaspectratio]{figures/testvi1.png}
@@ -42,6 +42,20 @@ pc: (([x] < 3) & !(([x] + 1) > 0)), x=-1
 pc: (!([x] < 3) & ([x] > 0)), x=3
 \end{lstlisting}
 
+\begin{table}[]
+\centering
+
+\def\arraystretch{1.5}
+\begin{tabular}{|l|l|l|}
+\hline
+           & \textbf{Path condition}                                         & \textbf{Calculated input values} \\ \hline
+\textbf{1} & $x< 3\wedge x+1> 0$ & $x=0$                              \\ \hline
+\textbf{2} & $x< 3\wedge \neg (x+1> 0)$ & $x=-1 $                            \\ \hline
+\textbf{3} & $\neg(x< 3)\wedge x>0$ & $x=3$                     \\ \hline
+\end{tabular}
+\caption{Results of Demo A}
+  \label{Tab:testvi1resu}
+\end{table}
 The outputs of symbolic execution in this example (Listing \ref{lst:testvi1_sym}) are the same as the expected (see Figure \ref{fig:symbolic_test}), and the unreachable fourth execution path $(!([x] < 3) \& !([x] > 0))$ is omitted from the list.
 
 To verify the correctness of the results, I ran the VI with these inputs, to see if they really produce different execution paths. As seen on Figure \ref{fig:verify1}, all the possible paths have been covered with this input set.
@@ -53,7 +67,7 @@ To verify the correctness of the results, I ran the VI with these inputs, to see
 \end{figure}
 
 \paragraph{Demo "B"}
-I wanted to test, if nesting case structures behaves correctly. When \textit{outside var} is false, \textit{inside var} should not matter in the path condition. Additionally, this test verifies, that boolean input values are processed correctly.
+I wanted to test, if nesting case structures behaves correctly, therefore the second demo features nested structures (Figure \ref{fig:testvi2}). When \textit{outside var} is false, \textit{inside var} should not matter in the path condition. Additionally, this test verifies, that boolean input values are processed correctly.
 
 \begin{figure}
 \centering
@@ -68,11 +82,32 @@ pc: ([outside var] & [inside var]), inside var=true, outside var=true
 pc: ([outside var] & ![inside var]), inside var=false, outside var=true
 pc: ![outside var], outside var=false
 \end{lstlisting}
-
+ % eredmenyek tablazatos formaban
 \section{Results of testing}
+
+% lista a tovabbi tesztesetekrol
 I tested the tool with a number of other self-made VIs as input. Although there were bugs in some cases in the parser, when creating a certain pattern on the block diagram (resulting in an exception), the overall results indicate, that the tool is working correctly, and gives the correct outputs.
 
+The tool runs on these simple VIs, almost instantaneously.
+
+
 Since the prototype lacks support for more fundamental LabVIEW elements, unfortunately, I was unable to demonstrate it on a real-life application.
+
+\begin{table}[ht]
+\centering
+\begin{tabularx}{\linewidth}{XX}
+\toprule
+\textbf{1. Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)}                         & The expected paths and inputs have been returned on the symbolic execution of Demo A, and the other VIs with a case structure                                           \\ \midrule
+\textbf{2. Specify input variables for each path to be used to reach it}                                                                                    & Ran Demo A and other VIs with the specified values and highlighted execution: the execution paths were the same as the expected                                         \\ \midrule
+\textbf{3. Return only one path for VIs without a case structure}                                                                                           & Test VI C with no case structure returned one line: "pc: True"                                                                                           \\ \midrule
+\textbf{4. Support basic arithmetical, comparison and logical operations (+, -, *, ++, --, \textless{}, \textgreater{}, ==, And, Or, Not) during execution} & These operations are all covered by the test VIs (+: C; -: C, D; *: C, E; ++: A, B, D; --: A, D; \textless{}: A; \textgreater{}: A, D; ==: E; And: F; Or: F; Not: E, F) \\ \midrule
+\textbf{5. Support integer and boolean data types}                                                                                                          & The tested VIs work well with these data types, even if they are mixed in the symbolic variable set (Test D)                                                            \\ \midrule
+\textbf{6. Stop execution of paths with an unsatisfiable condition}                                                                                         & Demonstrated by Demo A, the unsatisfiable path has been omitted                                                                                                         \\ \bottomrule
+\end{tabularx}
+
+\caption{Fulfilled requirements}
+  \label{Tab:Requ}
+\end{table}
 
 The requirements specified in the Design chapter have been fulfilled, the creation of the prototype was successful.
 %% screenshots

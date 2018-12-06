@@ -2,7 +2,7 @@
 \chapter{Design}
 %----------------------------------------------------------------------------
 \section{Goals}
-My goal is to implement a tool in LabVIEW, which can provide test inputs for a single VI, its front panel controls or input terminals. These test inputs should cover all the possible execution paths (in the case of LabVIEW, all the subdiagrams, or all combination of subdiagrams). After running the tool, outputs for each input set can be easily defined executing the VI. A tool like this can later help with unit test generation: using the generated input and output sets, xUnit-style tests can be created automatically, which will have 100\% branch (diagram) coverage.
+My goal is to implement a tool in LabVIEW, which can provide test inputs for a single VI, its front panel controls or input terminals. These test inputs should cover all the possible execution paths (all the subdiagrams, or all combination of subdiagrams in the case of LabVIEW). After running the tool, outputs for each input set can be easily defined executing the VI. A tool like this can later help with unit test generation: using the generated input and output sets, xUnit-style tests can be created automatically, which will have 100\% branch (diagram) coverage.
 
 According to my knowledge, no such tool exists for LabVIEW yet, so a simple tool created for the BSc thesis can be later be improved and used in an automatic test generation project.
 
@@ -10,7 +10,7 @@ A possible solution is symbolic execution of the VI: defining the input controls
 \section{Scope}
 During this BSc thesis, I am going to implement a prototype tool with basic functionality, and with support for a limited set of LabVIEW elements. This tool can later be improved, adding the whole set of LabVIEW primitives, and possibly developed into a whole test generation solution. 
 
-Requirements for the prototype:
+\paragraph{Requirements for the prototype:}
 \begin{enumerate}
 \item Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)
 \item Specify input variables for each path to be used to reach it
@@ -96,7 +96,7 @@ If performed correctly, the conversion will produce a simple algorithmic represe
 
 From the symbolic execution point of view, VIs (Virtual Instruments) can be treated as the program, on which the symbolic execution is done. It has inputs, outputs, and most of the instructions are usually the native components of LabVIEW (so that their behaviour can be predicted). Controls are going to be the inputs, their data type can be chosen as one of the basic types, clusters (similar to struct), or objects. In the case of the symbolic execution tool, I am going to stick to the basic types. Indicators are the outputs of the program.
 
-Instruction blocks use wires to pass data to each other. They are similar to variables in text-based languages, but they also define order of execution between blocks. Since each wire is going to represent a new variable in the program, the symbolic executor will have to deal with lots of unnamed variables.
+Instruction blocks use wires to pass data to each other. They are similar to variables in text-based languages, but they also define order of execution between blocks. Since each wire is going to represent a new variable in the program, the symbolic executor will have to deal with lots of (unnamed) variables.
 
 Another issue is dealing with nodes that depend on external data source, or those that perform an operation that is not supported by the constraint solver.
 
@@ -108,7 +108,7 @@ Sequence and disable structures are only involved during the conversion: sequenc
 Timing blocks will simply be ignored, as they are irrelevant to symbolic execution. 
 
 In the first prototype of the tool, I decided to implement the Case Structure only, this is the element, on which it is the easiest to demonstrate symbolic operation. 
-\subsection{Arithmetic, logic, and other operations}
+\subsection{Arithmetical, logical, and other operations}
 Basic arithmetical and logical operations, like addition, subtraction are easy to implement and to be solved by the constraint solver. Multiplication and division are also easy to implement, but can create such a nonlinear problem, that the solver cannot calculate. 
 
 More complex operations, like trigonometric functions and signal processing can be approximated with a constant value or linear function. External dependencies, like storage or network access are black box - they can be substituted with an expected value, or another symbolic variable.
@@ -175,4 +175,12 @@ The starting point of the model will be the class \textit{Statement}, which is t
 \label{fig:datamodeldiagram}
 \end{figure}
 
+\subsection{Execution algorithm}
 
+Performing the symbolic execution will be the job of the Symbolic Execution Loop part of the program. It will iterate the \textit{Statement}s of a \textit{Sequence}, evaluate the \textit{Expression}s (for example, execute an \textit{Operator}) in the \textit{Assignment}s, and put the result in the \textit{Variable}s. If the \textit{Expresson} contains a \textit{SymbolicVar}, it will evaluate to its simplest form. When a branching statement appears, the current node of the execution tree will create two branches: for both true and false cases. The stored path condition of the new execution tree nodes will be the previous path condition plus the condition of the branch concatenated with logical AND.
+
+At the end, each leaf of the execution tree will have a path condition, which can be evaluated using a constraint solver.
+
+It is important to keep the model of the program and the execution state apart (if the same model is intended to be used during the whole execution): variable values cannot be stored in \textit{Variable} objects, but in the execution tree node, in a data structure that allows association with \textit{Variable} objects. 
+
+An evaluated expression should not contain a reference to a variable, therefore, when evaluating a \textit{Variable}, it should return its value stored in the execution state. This way, the path condition will not contain reference to a program variable either, only symbolic variables (inputs).
