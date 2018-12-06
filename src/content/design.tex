@@ -177,7 +177,7 @@ The starting point of the model will be the class \textit{Statement}, which is t
 
 \subsection{Execution algorithm}
 
-Performing the symbolic execution will be the job of the Symbolic Execution Loop part of the program. It will iterate the \textit{Statement}s of a \textit{Sequence}, evaluate the \textit{Expression}s (for example, execute an \textit{Operator}) in the \textit{Assignment}s, and put the result in the \textit{Variable}s. If the \textit{Expresson} contains a \textit{SymbolicVar}, it will evaluate to its simplest form. When a branching statement appears, the current node of the execution tree will create two branches: for both true and false cases. The stored path condition of the new execution tree nodes will be the previous path condition plus the condition of the branch concatenated with logical AND.
+Performing the symbolic execution will be the job of the Symbolic Execution Loop part of the program. It will iterate the \textit{Statement}s of a \textit{Sequence}, evaluate the \textit{Expression}s (for example, execute an \textit{Operator}) in the \textit{Assignment}s, and put the result in the \textit{Variable}s. If the \textit{Expression} contains a \textit{SymbolicVar}, it will evaluate to its simplest form. When a branching statement appears, the current node of the execution tree will create two branches: for both true and false cases. The stored path condition of the new execution tree nodes will be the previous path condition plus the condition of the branch concatenated with logical AND.
 
 At the end, each leaf of the execution tree will have a path condition, which can be evaluated using a constraint solver.
 
