@@ -56,7 +56,7 @@ public class LauncherCommands : PushCommandContent
 \caption{LabVIEW Node object model} 
 \label{fig:lvobject}
 \end{figure}
-I implemented a launcher code based on the ExamplePlugins project, that integrates a menu command into the menu bar of NXG (Listing \ref{lst:menuapi}). The three parameters of the callback function provide access to the object model of LabVIEW. DocumentEditSite refers to the currently opened document, and since the execution will run on the opened VI, getting the model will be really easy: \lstinline[columns=fixed]{rootElement = site.ActiveDocumentEditor?.EditorInfo?.RootElement;}. The model will be passed to the parser component, then the returned Sequence object (which holds the procedural program) is given to the symbolic execution module (Listing \ref{lst:launchercode}). When finished, values of symbolic variables will be placed in each leaf, and can be retrieved using a \lstinline[columns=fixed]{leaf.getSymbols()} call.
+I implemented a launcher code based on the ExamplePlugins project, that integrates a menu command into the menu bar of NXG (Listing \ref{lst:menuapi}). The three parameters of the callback function provide access to the object model of LabVIEW. DocumentEditSite refers to the currently opened document, and since the execution will run on the opened VI, getting the model will be really easy: \lstinline[columns=fixed]{rootElement = site.ActiveDocumentEditor?.EditorInfo?.RootElement;}. The model will be passed to the parser component, then the returned Sequence object (which holds the imperative program) is given to the symbolic execution module (Listing \ref{lst:launchercode}). When finished, values of symbolic variables will be placed in each leaf, and can be retrieved using a \lstinline[columns=fixed]{leaf.getSymbols()} call.
 \lstset{escapechar=@}
 \begin{lstlisting}[frame=single,escapechar=@,float=!ht,caption={Launcher code},captionpos=b,label={lst:launchercode},language=C++]
 public static void OnRun(ICommandParameter parameter, ICompositionHost host, DocumentEditSite site)
@@ -132,8 +132,8 @@ The explanation of data structures used during the operation of the parser:
 \begin{itemize}
 \item \textbf{rootElement} : \underline{Element} -- the parameter of the algorithm, the diagram, whose immediate child nodes must be searched
 \item \textbf{nextNodes} : Queue<\underline{Wireable}> -- found \underline{Nodes}, waiting to be processed
-\item \textbf{variableDictionary} : Dictionary<\underline{ManhattanWire}, \textit{Variable}> -- association between LabVIEW wires and variables in the procedural program
-\item \textbf{sequence} : \textit{Sequence} -- the procedural program, chain of \textit{Statement}s, the result of this algorithm
+\item \textbf{variableDictionary} : Dictionary<\underline{ManhattanWire}, \textit{Variable}> -- association between LabVIEW wires and variables in the imperative program
+\item \textbf{sequence} : \textit{Sequence} -- the imperative program, chain of \textit{Statement}s, the result of this algorithm
 \end{itemize}
 
 

@@ -192,8 +192,20 @@ The primitives are grouped in the following categories (in the NXG version):
 
 \subsubsection{An example block diagram}
 
-%%%%%%%%%%%%%%
+A simple example program can be seen on Figure \ref{fig:examplecase}. It takes two integers, $x$ and $y$, as inputs, and gives one integer output, $z$. The program calculates the absolute difference of the two inputs.
 
+The implementation uses a case diagram: based on the value of the boolean condition (green question mark) terminal on the left side, the \textit{"True"} or the \textit{"False"} subdiagram executes. The condition in this case is the comparison of the two input values.
+
+The $x$ and $y$ values enter the subdiagram via a \emph{tunnel}. Tunnels make data connection on the border of a subdiagram possible - each subdiagram has the same set of input and output tunnels.
+
+The rest of the program is straightforward: the smaller number is subtracted from the bigger, and the result is forwarded to the $z$ output via the tunnel.
+
+\begin{figure}
+\centering
+\includegraphics[width=120mm,keepaspectratio]{figures/examplecase.png}
+\caption{Example with case diagram} 
+\label{fig:examplecase}
+\end{figure}
 
 \subsection{Front panel}
 Front panel is the user interface of a VI. It holds similar controls and indicators as a desktop forms application, such as input boxes, buttons, progress bars; as well as controls specific for engineering applications, like graphs, charts and waveform displays. Controls and indicators are  created automatically for a control or indicator node on the block diagram, and their values are linked. 
