@@ -122,7 +122,7 @@ nextNodes.Enqueue(thisNode)\;
  \label{alg:parser}
 \end{algorithm}
 
-The parser binds a \textit{Variable} to all of the wires. New \textit{Variable}s are introduced, when the parser processes the output wires of a node (since a wire can be connected to only one node output), and all \underline{ManhattanWire} - \textit{Variable} pairs will be stored in a lookup table (C\# Dictionary) global to a single run of the algorithm. This way, if multiple nodes use that output as an input, it will be the same \textit{Variable}.
+The parser binds a \textit{Variable} to all of the wires (\underline{ManhattanWire}s, the type of wires connecting \underline{Node}s). New \textit{Variable}s are introduced, when the parser processes the output wires of a node (since a wire can be connected to only one node output), and all \underline{ManhattanWire} - \textit{Variable} pairs will be stored in a lookup table (C\# Dictionary) global to a single run of the algorithm. This way, if multiple nodes use that output as an input, it will be the same \textit{Variable}.
 
 When the search reaches a case structure, the parser will be recursively called for both subdiagrams. Wires enter the case diagram through \underline{BorderNode}s (or tunnels), so that for each of them a new \textit{Variable} will be introduced. In a subdiagram, the search will start from the \underline{BorderNode}s (and the nodes without input wires). After the search execution for both diagrams, the execution returns to the root parser.
 
@@ -299,6 +299,6 @@ class ExecutionState
 For this is only a prototype, the results, which are the list of execution paths, their path conditions, and the calculated symbolic variables. After getting the execution tree leafs (see Listing \ref{lst:launchercode}), a simple string builder loop collects the data from the output structures, and the final string gets displayed in a \underline{NIMessageBox}.
 
 \section{Installing the plugin}
-Since my tool is a program library (DLL), it had to be made sure, that LabVIEW loads it at startup. LabVIEW NXG loads all the libraries it finds under the LabVIEW NXG 2.0\\Addons directory. I placed the DLL and the debug file in this folder, along with the libraries of Z3 solver.
+Since my tool is a program library (DLL), it had to be made sure, that LabVIEW loads it at startup. LabVIEW NXG loads all the libraries it finds under the \verb|LabVIEW NXG 2.0\Addons| directory. I placed the DLL and the debug file in this folder, along with the libraries of Z3 solver.
 
 On the next start, LabVIEW loads the installed plugins.

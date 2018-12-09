@@ -9,7 +9,7 @@ Therefore, I overrode the ToString functions for all the model objects to return
 In the following examples, the shown converted procedural examples are the output of this routine.
 \section{Small demos}
 \paragraph{Demo "A"}
-For the first demo I used the same program, which I used to demonstrate symbolic execution in the Background section (Listing \ref{lst:symbolic_test}). The dataflow counterpart of that program\footnote{The demo VIs, and other test VIs (mentioned in the Requirements table) are included in the attachment. See appendix.} can be seen on Figure \ref{fig:testvi1}.
+For the first demo I used the same program, which I used to demonstrate symbolic execution in the Background section (Listing \ref{lst:symbolic_test}). The dataflow counterpart of that program\footnote{The demo VIs, and other test VIs (mentioned in the Requirements table) are included in the attachment. See appendix for more details.} can be seen on Figure \ref{fig:testvi1}.
 \begin{figure}
 \centering
 \includegraphics[width=150mm,keepaspectratio]{figures/testvi1.png}
@@ -36,11 +36,6 @@ End IF
 [Output] : G; 
 \end{lstlisting}
 
-\begin{lstlisting}[frame=single,float=!ht,caption={The output of the symbolic execution for VI "A"},captionpos=b,label={lst:testvi1_sym},language=]
-pc: (([x] < 3) & (([x] + 1) > 0)), x=0
-pc: (([x] < 3) & !(([x] + 1) > 0)), x=-1
-pc: (!([x] < 3) & ([x] > 0)), x=3
-\end{lstlisting}
 
 \begin{table}[]
 \centering
@@ -109,5 +104,9 @@ Since the prototype lacks support for more fundamental LabVIEW elements, unfortu
   \label{Tab:Requ}
 \end{table}
 
+
 The requirements specified in the Design chapter have been fulfilled, the creation of the prototype was successful.
+
+\paragraph{Known bugs} If the tunnels of two nested subdiagrams are directly connected, the parser crashes, or gives wrong output. I was not able to fix that during the period of my BSc thesis.
+
 %% screenshots

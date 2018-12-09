@@ -64,9 +64,9 @@ Before installation, make sure, the system meets the hardware requirements of La
 \item Microsoft Research Z3 Solver\footnote{\url{https://www.microsoft.com/en-us/download/details.aspx?id=52270}}
 \item National Instruments LabVIEW NXG 2.1\footnote{\url{http://www.ni.com/en-us/shop/labview/labview-nxg.html}}
 \end{itemize}
-Open solution \textit{SymbolicTool.sln} with Visual Studio. After opening the project, the paths of referenced libraries might need to be adjusted to the paths on the actual system. 
+Open solution \verb|SymbolicTool.sln| with Visual Studio. After opening the project, the paths of referenced libraries might need to be adjusted to the paths on the actual system. 
 
-After building, copy SymbolicTool.plugin.dll from the bin folder of the project to the Addons folder of LabVIEW NXG 2.1 (or a sub-folder). Copying Z3 libraries to the Addons folder might also be necessary. Run LabVIEW. A new entry called SymbolicTool should appear in the main menu bar. Select the commands of this menu, when a Block Diagram of a VI is active on the screen.
+After building, copy \verb|SymbolicTool.plugin.dll| from the \verb|bin| folder of the project to the \verb|Addons| folder of \verb|LabVIEW NXG 2.1| (or a sub-folder). Copying Z3 libraries to the \verb|Addons| folder might also be necessary. Run LabVIEW. A new entry called SymbolicTool should appear in the main menu bar. Select the commands of this menu, when a Block Diagram of a VI is active on the screen.
 \begin{figure}
 \centering
 \includegraphics[width=150mm,keepaspectratio]{figures/interface.png}
@@ -74,4 +74,4 @@ After building, copy SymbolicTool.plugin.dll from the bin folder of the project 
 \label{fig:interface1}
 \end{figure}
 
-\paragraph{Debugging} Copy SymbolicTool.plugin.pdb to the Addons folder along with the DLL. Run LabVIEW and open a project. Select Debug / Attach to process... in Visual Studio and attach to LabVIEW NXG.exe. Now the debugger in Visual Studio can be used.
+\paragraph{Debugging} Copy \verb|SymbolicTool.plugin.pdb| to the \verb|Addons| folder along with the DLL. Run LabVIEW and open a project. Select Debug / Attach to process... in Visual Studio and attach to \verb|LabVIEW NXG.exe|. Now the debugger in Visual Studio can be used.

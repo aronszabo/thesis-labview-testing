@@ -24,7 +24,7 @@ During this BSc thesis, I am going to implement a prototype tool with basic func
 
 The prototype tool will have some limitations to fit in the span of BSc thesis. Due to the restricted functionality, it will likely not run on real projects. Though, the prototype might be a good starting point for developing a tool, which will.
 
-\paragraph{The feature set, that has to be implemented additionally for a working tool:}
+\paragraph{The feature set that has to be implemented additionally for a working tool:}
 
 \begin{itemize}
   \item Further supported data types: double, string, array, cluster
@@ -47,9 +47,9 @@ The prototype tool will have some limitations to fit in the span of BSc thesis. 
 
 \section{Architecture}
 
-The tool will be a plugin of LabVIEW NXG, to have access to the programming interface and object model of VIs, and to integrate the tool to the UI. The tool will use the Z3 Solver too, referenced as a library.
+The tool will be a plugin of LabVIEW NXG, to have access to the programming interface and object model of VIs, and to integrate the tool to the UI. At the end of the execution, to calculate input variables using the path condition, a constraint solver is needed. It is quite difficult to implement one, therefore I am going to use an existing solution, Z3, which is a popular and powerful tool with easy learning curve. The tool will reference Z3 Solver as a library.
 
-Two main parts of the tool will be the Parser and the Symbolic Execution Loop. The job of the parser is to interpret and convert a LabVIEW VI into a form that can be later used during symbolic execution. The second part, Symbolic Execution Loop iterates through the converted procedural program, executing the statements, and forking when necessary. The output of the program is an execution tree, with its leafs associated to the possible execution paths of the program. These leafs will contain a path condition, which can be evaluated by the Z3 Solver, returning input values to be used to reach that path.
+Two main parts of the tool will be the \emph{Parser} and the \emph{Symbolic Execution Loop}. The job of the parser is to interpret and convert a LabVIEW VI into a form that can be later used during symbolic execution. The second part, Symbolic Execution Loop iterates through the converted procedural program, executing the statements, and forking when necessary. The output of the program is an execution tree, with its leafs associated to the possible execution paths of the program. These leafs will contain a path condition, which can be evaluated by the Z3 Solver, returning input values to be used to reach that path.
 \begin{figure}
 \includegraphics[width=150mm,keepaspectratio]{figures/architecture.pdf}
 \caption{Architecture plan} 

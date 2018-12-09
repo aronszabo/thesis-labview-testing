@@ -86,7 +86,7 @@ void test(int x){
 
 X<3 is a forking statement, because both X<3 and its negated (X>=3) can be satisfied. Execution continues on both paths, and path condition updates. On the X<3 branch, x is updated to x+1, and the condition evaluates on the updated value. On the other branch, one of the path conditions (X>=3 \& X<=0) cannot be satisfied, in this case the execution will not continue. When the execution finishes on one branch, the path condition is evaluated using a constraint solver, and it will calculate a possible value for the symbolic variable. The whole execution tree is shown on Figure \ref{fig:symbolic_test}. \cite{Pasareanu}
 
-The calculated values:
+An example of calculated values:
 \begin{itemize}
 \item \textbf{Path 1:} x=0
 \item \textbf{Path 2:} x=-1
@@ -189,6 +189,11 @@ The primitives are grouped in the following categories (in the NXG version):
                         \item \textbf{User interface:} display dialogs or other GUI elements
          \item \textbf{Interop:} run C code or G code of other LabVIEW version, call system shell
 \end{enumerate}
+
+\subsubsection{An example block diagram}
+
+%%%%%%%%%%%%%%
+
 
 \subsection{Front panel}
 Front panel is the user interface of a VI. It holds similar controls and indicators as a desktop forms application, such as input boxes, buttons, progress bars; as well as controls specific for engineering applications, like graphs, charts and waveform displays. Controls and indicators are  created automatically for a control or indicator node on the block diagram, and their values are linked. 

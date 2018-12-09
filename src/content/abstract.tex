@@ -9,9 +9,9 @@
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
 %Jelen dokumentum egy diplomaterv sablon, amely formai keretet ad a BME Villamosmérnöki és Informatikai Karán végző hallgatók által elkészítendő szakdolgozatnak és diplomatervnek. A sablon használata opcionális. Ez a sablon \LaTeX~alapú, a \emph{TeXLive} \TeX-implementációval és a PDF-\LaTeX~fordítóval működőképes.
-Az ipari és beágyazott rendszerek világában kiemelt fontosságú a hardver és szoftver helyes működésűre és megbízhatóra tervezése. Egy hibás megoldás nagy károkat okozhat gyártónak és fogyasztónak egyaránt.
+Az ipari és beágyazott rendszerek világában kiemelt fontosságú a hardver és szoftver helyes működésűre és megbízhatóra tervezése. Egy hibás megoldás nagy károkat okozhat a gyártónak és a fogyasztónak egyaránt.
 
-Modern gyártási folyamatok kihasználják a szoftver adta rugalmasságot a gyártósorok irányításánál, vagy a kész termék mérésénél és tesztelésénél. Prototípusok készítésekor pedig ezen mérnöki szoftverek előnye még lényegesebb. Ezen megoldások egy része a National Instuments cég hardver- és szoftvercsaládjának használatával valósult meg, amelyek fő erőssége a gyors prototípuskészítés, könnyű és hatékony megvalósítás lehetővé tétele.
+A modern gyártási folyamatok kihasználják a szoftver adta rugalmasságot a gyártósorok irányításánál, vagy a kész termék mérésénél és tesztelésénél. Prototípusok készítésekor pedig ezen mérnöki szoftverek előnye még lényegesebb. Ilyen mérnöki szoftver a National Instuments cég LabVIEW terméke, amely fő erőssége a gyors prototípuskészítés, könnyű és hatékony megvalósítás lehetővé tétele.
 
 Ilyen szoftverek fejlesztésekor a megvalósítás közben jelen kell lennie a folyamatos ellenőrzésnek is, ennek egy módja a szoftver tesztelése. Az egységtesztelés (a tesztelés egy fajtája) a program legkisebb tesztelhető részegységeinek helyes működését igazolja, olyan módon, hogy az teszteléskor el van választva a program többi részétől.
 
@@ -31,13 +31,13 @@ Szakdolgozatomban röviden kifejtem az érintett témákat, és bemutatom az esz
 
 %This document is a \LaTeX-based skeleton for BSc/MSc~theses of students at the Electrical Engineering and Informatics Faculty, Budapest University of Technology and Economics. The usage of this skeleton is optional. It has been tested with the \emph{TeXLive} \TeX~implementation, and it requires the PDF-\LaTeX~compiler.
 
-In the world of industrial and embedded computer systems, it is a top priority to design both hardware and software correctly functioning and reliable. A faulty solution can cause a significant financial loss to the manufacturer, or harm to the consumer. 
+In the world of industrial and embedded computer systems, it is a top priority to design reliable and correctly functioning hardware and software. A faulty solution can cause a significant financial loss to the manufacturer, or harm to the consumer. 
 
 Modern manufacturing techniques use the flexibility of software to control a production line, or to test and measure the finished product more efficiently. In the case of product prototyping, the use of engineering software is even more essential. A number of these solutions are implemented with the hardware and software products of National Instruments, whose main strength is quick prototyping, easy implementation and cost effectiveness.
 
-During the development of such software, continuous verification should follow the implementation, a method of doing that is software testing. Unit testing is a type of software testing, it verifies the correct behaviour of the smallest testable part of a program, isolated from all other parts or the outside world.
+During the development of such software, continuous verification should follow the implementation, e.g., by performing software testing. Unit testing is a type of software testing, it verifies the correct behaviour of the smallest testable part of a program, isolated from all other parts of the outside world.
 
-However, testing is a time-consuming, expensive process, when not done effectively. Therefore, techniques to support or automatize testing, and test generation are being researched. One of these techniques is symbolic execution, which supports unit test generation with providing a set test inputs, that maximizes the coverage of the software by the test.
+However, testing is a time-consuming, expensive process, when not done effectively. Therefore, techniques to support or automate testing, and test generation are being researched. One of these techniques is symbolic execution, which supports unit test generation with providing a set test inputs that maximizes the coverage of the software by the test.
 
 My task was to investigate symbolic execution and the topic of unit testing, and to implement a prototype of it for the software platform of National Instruments, the LabVIEW framework, where no similar tool exists yet. This is a challenging task, since the dataflow programming approach of LabVIEW is really different from traditional programming languages.
 
