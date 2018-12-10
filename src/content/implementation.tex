@@ -1,5 +1,6 @@
 %----------------------------------------------------------------------------
 \chapter{Implementation}
+\label{chap:implementation}
 %----------------------------------------------------------------------------
 \section{Different versions of NI LabVIEW}
 At the time of writing this thesis, National Instruments offers two versions of LabVIEW: LabVIEW 2018\footnote{\url{http://www.ni.com/en-us/shop/labview/labview-details.html}}, and LabVIEW NXG\footnote{\url{http://www.ni.com/en-us/shop/labview/labview-nxg.html}}. LabVIEW 2018 is a sequel to the LabVIEW versions released in the past few years, it operates reliably and fast, has support for all the NI hardware, and has a wide range of features. LabVIEW NXG is a brand new product, it has been created from scratch, and has been developed according to current standards - optimized for the newest hardware and software, and a really comfortable UI. Most features are still beta however, or under development\footnote{\url{http://www.ni.com/pdf/products/us/labview-roadmap.pdf}}, a large number of hardware are not yet supported, and the operation is not as reliable as the current generation software.\cite{nxg_article}
@@ -142,7 +143,7 @@ Of course, this pseudo-code is more of a demonstration, than the actual program.
 
 Since references from one LabVIEW object to another were mostly using a heterogeneous collection, type checks and type casts take up a large percentage of the source code.
 
-\section{Symbolic Execution Loop}
+\section{Symbolic execution loop}
 
 As mentioned earlier, symbolic execution is an extension to regular execution. The loop will iterate through the program, and execute the statements as it would normally, if there are no symbolic variables present.
 

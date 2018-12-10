@@ -1,5 +1,6 @@
 %----------------------------------------------------------------------------
 \chapter{Design}
+\label{chap:design}
 %----------------------------------------------------------------------------
 \section{Goals}
 My goal is to implement a tool in LabVIEW, which can provide test inputs for a single VI, its front panel controls or input terminals. These test inputs should cover all the possible execution paths (all the subdiagrams, or all combination of subdiagrams in the case of LabVIEW). After running the tool, outputs for each input set can be easily defined executing the VI. A tool like this can later help with unit test generation: using the generated input and output sets, xUnit-style tests can be created automatically, which will have 100\% branch (diagram) coverage.
@@ -15,7 +16,7 @@ During this BSc thesis, I am going to implement a prototype tool with basic func
 \item Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)
 \item Specify input variables for each path to be used to reach it
 \item Return only one path for VIs without a case structure
-\item Support basic arithmetical, comparison and logical operations (+, -, *, ++, --, <, >, ==, And, Or, Not) during execution
+\item Support basic arithmetical, comparison and logical operations (+, -, *, ++, -{}-, <, >, ==, And, Or, Not) during execution
 \item Support integer and boolean data types
 \item Stop execution of paths with an unsatisfiable condition
 \end{enumerate}
@@ -49,7 +50,7 @@ The prototype tool will have some limitations to fit in the span of BSc thesis. 
 
 The tool will be a plugin of LabVIEW NXG, to have access to the programming interface and object model of VIs, and to integrate the tool to the UI. At the end of the execution, to calculate input variables using the path condition, a constraint solver is needed. It is quite difficult to implement one, therefore I am going to use an existing solution, Z3, which is a popular and powerful tool with easy learning curve. The tool will reference Z3 Solver as a library.
 
-Two main parts of the tool will be the \emph{Parser} and the \emph{Symbolic Execution Loop}. The job of the parser is to interpret and convert a LabVIEW VI into a form that can be later used during symbolic execution. The second part, Symbolic Execution Loop iterates through the converted imperative program, executing the statements, and forking when necessary. The output of the program is an execution tree, with its leafs associated to the possible execution paths of the program. These leafs will contain a path condition, which can be evaluated by the Z3 Solver, returning input values to be used to reach that path.
+Two main parts of the tool will be the \emph{parser} and the \emph{symbolic execution loop}. The job of the parser is to interpret and convert a LabVIEW VI into a form that can be later used during symbolic execution. The second part, symbolic execution loop iterates through the converted imperative program, executing the statements, and forking when necessary. The output of the program is an execution tree, with its leafs associated to the possible execution paths of the program. These leafs will contain a path condition, which can be evaluated by the Z3 Solver, returning input values to be used to reach that path.
 \begin{figure}
 \includegraphics[width=150mm,keepaspectratio]{figures/architecture.pdf}
 \caption{Architecture plan} 
@@ -62,7 +63,7 @@ The steps executed by the tool will be the following:
 \begin{itemize}
   \item Access the object model of the tested Virtual Instrument
   \item Generate an imperative representation of the dataflow program (Parser)
-  \item Execute the imperative program with the inputs of the VI as symbolic variables (Symbolic Execution Loop)
+  \item Execute the imperative program with the inputs of the VI as symbolic variables (Symbolic execution loop)
    \item Use a constraint solver to calculate the symbolic variables
 in the leafs of the symbolic tree
      \item Display the calculated inputs (or use them to build a unit test)
@@ -177,7 +178,7 @@ The starting point of the model will be the class \textit{Statement}, which is t
 
 \subsection{Execution algorithm}
 
-Performing the symbolic execution will be the job of the Symbolic Execution Loop part of the program. It will iterate the \textit{Statement}s of a \textit{Sequence}, evaluate the \textit{Expression}s (for example, execute an \textit{Operator}) in the \textit{Assignment}s, and put the result in the \textit{Variable}s. If the \textit{Expression} contains a \textit{SymbolicVar}, it will evaluate to its simplest form. When a branching statement appears, the current node of the execution tree will create two branches: for both true and false cases. The stored path condition of the new execution tree nodes will be the previous path condition plus the condition of the branch concatenated with logical AND.
+Performing the symbolic execution will be the job of the symbolic execution loop part of the program. It will iterate the \textit{Statement}s of a \textit{Sequence}, evaluate the \textit{Expression}s (for example, execute an \textit{Operator}) in the \textit{Assignment}s, and put the result in the \textit{Variable}s. If the \textit{Expression} contains a \textit{SymbolicVar}, it will evaluate to its simplest form. When a branching statement appears, the current node of the execution tree will create two branches: for both true and false cases. The stored path condition of the new execution tree nodes will be the previous path condition plus the condition of the branch concatenated with logical AND.
 
 At the end, each leaf of the execution tree will have a path condition, which can be evaluated using a constraint solver.
 

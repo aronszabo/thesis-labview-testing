@@ -1,5 +1,6 @@
 %----------------------------------------------------------------------------
 \chapter{Evaluation}
+\label{chap:evaluation}
 %----------------------------------------------------------------------------
 \section{Displaying the imperative program}
 During development, and when running the finished tool, it became very important to see the output of the parser part in an easy to read form. The C\# debugger did not fit for that job, since despite that I could see the object hierarchy, and inspect values and statements one-by-one, I could not see the converted program as a whole. 
@@ -95,7 +96,7 @@ Since the prototype lacks support for more fundamental LabVIEW elements, unfortu
 \textbf{1. Return all possible paths (and path conditions) for VIs that have one or more case structures (with boolean conditions)}                         & The expected paths and inputs have been returned on the symbolic execution of Demo A, and the other VIs with a case structure                                           \\ \midrule
 \textbf{2. Specify input variables for each path to be used to reach it}                                                                                    & Ran Demo A and other VIs with the specified values and highlighted execution: the execution paths were the same as the expected                                         \\ \midrule
 \textbf{3. Return only one path for VIs without a case structure}                                                                                           & Test VI C with no case structure returned one line: "pc: True"                                                                                           \\ \midrule
-\textbf{4. Support basic arithmetical, comparison and logical operations (+, -, *, ++, -{}-, \textless{}, \textgreater{}, ==, And, Or, Not) during execution} & These operations are all covered by the test VIs (see Table \ref{Tab:Trac}) \\ \midrule
+\textbf{4. Support basic arithmetical, comparison and logical operations (+, -, *, ++, -{}-, \textless{}, \textgreater{}, ==, And, Or, Not) during execution} & These operations are all covered by the test VIs \\ \midrule
 \textbf{5. Support integer and boolean data types}                                                                                                          & The tested VIs work well with these data types, even if they are mixed in the symbolic variable set (Test D)                                                            \\ \midrule
 \textbf{6. Stop execution of paths with an unsatisfiable condition}                                                                                         & Demonstrated by Demo A, the unsatisfiable path has been omitted                                                                                                         \\ \bottomrule
 \end{tabularx}
@@ -105,7 +106,7 @@ Since the prototype lacks support for more fundamental LabVIEW elements, unfortu
 \end{table}
 
 
-The requirements specified in the Design chapter have been fulfilled, the creation of the prototype was successful.
+The requirements specified in the Design chapter have been fulfilled, the creation of the prototype was successful. See Table \ref{Tab:Trac} for the traceability information of the requirements.
 
 \paragraph{Known bugs} If the tunnels of two nested subdiagrams are directly connected, the parser crashes, or gives wrong output. I was not able to fix that during the period of my BSc thesis.
 
